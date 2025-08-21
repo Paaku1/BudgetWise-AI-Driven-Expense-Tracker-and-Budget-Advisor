@@ -1,8 +1,9 @@
 package org.budgetwise.backend.service;
 
-import org.jwt.authentication.model.AuthenticationResponse;
-import org.jwt.authentication.model.User;
-import org.jwt.authentication.repository.UserRepository;
+
+import org.budgetwise.backend.model.AuthenticationResponse;
+import org.budgetwise.backend.model.User;
+import org.budgetwise.backend.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;

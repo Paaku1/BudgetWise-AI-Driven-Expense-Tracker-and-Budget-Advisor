@@ -1,8 +1,8 @@
 package org.budgetwise.backend.config;
 
-import org.jwt.authentication.filter.JwtAuthenticationFilter;
-import org.jwt.authentication.service.JwtService;
-import org.jwt.authentication.service.UserService;
+import org.budgetwise.backend.filter.JwtAuthenticationFilter;
+import org.budgetwise.backend.service.JwtService;
+import org.budgetwise.backend.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

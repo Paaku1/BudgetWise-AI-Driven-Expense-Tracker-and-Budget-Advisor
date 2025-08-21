@@ -1,6 +1,7 @@
 package org.budgetwise.backend.repository;
 
-import org.jwt.authentication.model.User;
+
+import org.budgetwise.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

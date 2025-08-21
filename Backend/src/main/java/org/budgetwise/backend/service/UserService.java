@@ -1,6 +1,7 @@
 package org.budgetwise.backend.service;
 
-import org.jwt.authentication.repository.UserRepository;
+
+import org.budgetwise.backend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

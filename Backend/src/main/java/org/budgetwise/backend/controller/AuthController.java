@@ -1,8 +1,9 @@
 package org.budgetwise.backend.controller;
 
-import org.jwt.authentication.model.AuthenticationResponse;
-import org.jwt.authentication.model.User;
-import org.jwt.authentication.service.AuthService;
+
+import org.budgetwise.backend.model.AuthenticationResponse;
+import org.budgetwise.backend.model.User;
+import org.budgetwise.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
