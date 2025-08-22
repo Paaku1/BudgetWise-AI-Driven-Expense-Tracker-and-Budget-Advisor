@@ -25,10 +25,14 @@ public class AuthController {
         this.userRepository = userRepository;
     }
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody User request){
-        return ResponseEntity.ok(authService.register(request));
+    public ResponseEntity<?> register(@RequestBody User request){
+        try {
+            authService.register(request);
+            return ResponseEntity.ok("User registered successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody User request){
@@ -36,8 +40,8 @@ public class AuthController {
     }
 
     @GetMapping("/home")
-    public ResponseEntity<Optional<User>> home(){
-        return ResponseEntity.ok(userRepository.findUserByUsername("paaku"));
+    public ResponseEntity<String> home(){
+        return ResponseEntity.ok("Welcome to Home page");
     }
 
 }

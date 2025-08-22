@@ -20,21 +20,26 @@ const RegisterPage = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:5000/register", formData);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post("http://localhost:5000/register", formData);
 
-      // Save token
-      localStorage.setItem("token", response.data.token);
+            // ✅ Save token if success
+            localStorage.setItem("token", response.data.token);
 
-      // Redirect to dashboard after register
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Registration failed:", error);
-      alert("Registration failed, please try again.");
-    }
-  };
+            // ✅ Redirect
+            navigate("/dashboard");
+        } catch (error) {
+            if (error.response) {
+                // backend returned an error
+                alert(error.response.data); // e.g. "Username already exists"
+            } else {
+                alert("Registration failed, please try again.");
+            }
+        }
+    };
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
