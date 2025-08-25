@@ -23,7 +23,7 @@ BudgetWise helps users track daily income, expenses, and savings goals. It provi
 
 - **Backend:** Java, Spring Boot, Maven
 - **Frontend:** React Vite, JavaScript, npm
-- **Database:** (Specify your DB, e.g., PostgreSQL, MongoDB)
+- **Database:** PostgreSQL
 - **APIs:** RESTful endpoints
 
 ## Getting Started
