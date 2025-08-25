@@ -25,23 +25,19 @@ const RegisterPage = () => {
         try {
             const response = await axios.post("http://localhost:5000/register", formData);
 
-            // ✅ Save token if success
-            localStorage.setItem("token", response.data.token);
+                localStorage.setItem("token", response.data.token);
+                // localStorage.setItem("userId", response.data.userId);
 
-            // ✅ Redirect
-            navigate("/dashboard");
+                navigate("/profile");
         } catch (error) {
-            if (error.response) {
-                // backend returned an error
-                alert(error.response.data); // e.g. "Username already exists"
-            } else {
-                alert("Registration failed, please try again.");
-            }
+            console.error("Registration failed:", error);
+            alert("Registration failed, please try again.");
         }
     };
 
 
-  return (
+
+    return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
