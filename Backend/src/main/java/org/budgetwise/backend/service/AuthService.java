@@ -25,14 +25,12 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    public void register(User request){
-
+    public AuthenticationResponse register(User request){
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
 
         User user = new User();
-
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setUsername(request.getUsername());
@@ -42,8 +40,9 @@ public class AuthService {
         user = userRepository.save(user);
 
         String token = jwtService.generateToken(user);
-        new AuthenticationResponse(token, user.getId());
+        return new AuthenticationResponse(token, user.getId());
     }
+
 
     public AuthenticationResponse authenticate(User request){
         authenticationManager.authenticate(

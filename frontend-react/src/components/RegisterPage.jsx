@@ -27,10 +27,9 @@ const RegisterPage = () => {
         try {
             const response = await axios.post("http://localhost:5000/register", formData);
 
-                localStorage.setItem("token", response.data.token);
-                // localStorage.setItem("userId", response.data.userId);
-
-                navigate("/profile");
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("userId", response.data.userId);
+            navigate("/profile");
         } catch (error) {
             console.error("Registration failed:", error);
             alert("Registration failed, please try again.");

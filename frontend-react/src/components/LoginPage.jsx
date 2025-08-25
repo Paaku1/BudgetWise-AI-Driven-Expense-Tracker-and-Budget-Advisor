@@ -27,6 +27,7 @@ function LoginPage() {
       sessionStorage.setItem("accessToken", data.token);
 
       navigate("/dashboard");
+        // eslint-disable-next-line no-unused-vars
     } catch (err) {
       setError("Login failed. Try again.");
     }

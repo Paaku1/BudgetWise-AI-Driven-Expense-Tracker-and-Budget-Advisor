@@ -36,7 +36,7 @@ function ProfilePage() {
             );
 
             // Redirect to home/dashboard after profile creation
-            navigate("/home");
+            navigate("/dashboard");
         } catch (error) {
             console.error("Profile creation failed:", error);
             alert(error.response?.data || "Profile creation failed, try again!");
