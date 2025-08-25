@@ -1,5 +1,5 @@
 import React from "react";
-import "./Homepage.css";
+import "../styles/HomePage.css";
 import heroImage from "../assets/hero-dashboard.jpeg";
 import { Link } from "react-router-dom";
 
