@@ -1,17 +1,19 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --primary: 220, 90%, 56%;         /* Bright Indigo Blue */
+  --primary-glow: 220, 100%, 70%;   /* Glow version of primary */
+  --success: 160, 70%, 40%;         /* Teal Green */
+  --success-glow: 160, 80%, 60%;
+  --accent: 270, 100%, 96%;         /* Light Violet Background */
+  --info: 200, 100%, 50%;
+  --warning: 36, 100%, 50%;
+  --background: 0, 0%, 100%;
+  --foreground: 240, 10%, 10%;
+  --muted: 240, 10%, 94%;
+  --muted-foreground: 240, 6%, 40%;
+  --border: 240, 5%, 85%;
+  --card: 0, 0%, 100%;
 }
+
 
 a {
   font-weight: 500;
