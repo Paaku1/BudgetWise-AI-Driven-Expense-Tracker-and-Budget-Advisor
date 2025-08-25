@@ -27,21 +27,15 @@ const RegisterPage = () => {
         try {
             const response = await axios.post("http://localhost:5000/register", formData);
 
-            // ✅ Save token if success
-            localStorage.setItem("token", response.data.token);
+                localStorage.setItem("token", response.data.token);
+                // localStorage.setItem("userId", response.data.userId);
 
-            // ✅ Redirect
-            navigate("/dashboard");
+                navigate("/profile");
         } catch (error) {
-            if (error.response) {
-                // backend returned an error
-                alert(error.response.data); // e.g. "Username already exists"
-            } else {
-                alert("Registration failed, please try again.");
-            }
+            console.error("Registration failed:", error);
+            alert("Registration failed, please try again.");
         }
     };
-
 
   return (
     <div className="register-container">
@@ -99,6 +93,7 @@ const RegisterPage = () => {
         </form>
 
         <p className="form-text">
+
           Already have an account?{" "}
           <span
             className="form-link"

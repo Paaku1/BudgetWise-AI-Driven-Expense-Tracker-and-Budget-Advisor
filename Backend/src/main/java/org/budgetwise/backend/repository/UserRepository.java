@@ -1,6 +1,5 @@
 package org.budgetwise.backend.repository;
 
-
 import org.budgetwise.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +10,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findUserByUsername(String username);
 
     boolean existsByUsername(String username);
+
 }

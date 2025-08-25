@@ -1,3 +1,3 @@
 package org.budgetwise.backend.model;
 
-public record AuthenticationResponse(String token) { }
+public record AuthenticationResponse(String token, int userId) { }
