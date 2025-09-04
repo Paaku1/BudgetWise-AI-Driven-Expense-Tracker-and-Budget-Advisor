@@ -22,9 +22,9 @@ function LoginPage() {
         setError("Invalid credentials");
         return;
       }
-
       const data = await response.json();
-      sessionStorage.setItem("accessToken", data.token);
+      localStorage.setItem("accessToken", data.token);
+      localStorage.setItem("userId", data.userId);
 
       navigate("/dashboard");
         // eslint-disable-next-line no-unused-vars
