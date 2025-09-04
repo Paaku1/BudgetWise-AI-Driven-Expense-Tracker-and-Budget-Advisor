@@ -22,7 +22,7 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String type;
+    private TransactionType type;
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;

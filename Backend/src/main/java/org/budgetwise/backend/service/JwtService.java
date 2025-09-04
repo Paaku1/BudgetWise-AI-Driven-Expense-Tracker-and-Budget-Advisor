@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -24,7 +26,7 @@ public class JwtService {
                 .builder()
                 .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+ 24L * 60 * 60 * 1000))
+                .expiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
                 .signWith(getSignInKey())
                 .compact();
     }

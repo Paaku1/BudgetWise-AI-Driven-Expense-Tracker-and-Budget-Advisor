@@ -1,53 +1,46 @@
-import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Dashboard() {
-  const [profile, setProfile] = useState(null);
-  const navigate = useNavigate();
+const Dashboard = () => {
+    const navigate = useNavigate();
+    const username = localStorage.getItem("username") || "User";
 
-  useEffect(() => {
-    const token = sessionStorage.getItem("accessToken");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        navigate("/login");
+    };
 
-    fetch("http://localhost:5000/home", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          sessionStorage.removeItem("accessToken");
-          navigate("/login");
-        }
-        return res.json();
-      })
-      .then((data) => setProfile(data))
-      .catch(() => setProfile(null));
-  }, [navigate]);
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md text-center">
+                <h1 className="text-2xl font-bold mb-6">Welcome, {username} 👋</h1>
 
-  const logout = () => {
-    sessionStorage.removeItem("accessToken");
-    navigate("/login");
-  };
+                <div className="space-y-4">
+                    <button
+                        onClick={() => navigate("/daily-log")}
+                        className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600"
+                    >
+                        ➕ Add Transaction
+                    </button>
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h2>Dashboard</h2>
-      {profile ? (
-        <pre>{JSON.stringify(profile, null, 2)}</pre>
-      ) : (
-        <p>Loading profile...</p>
-      )}
-      <button onClick={logout} style={{ marginTop: "15px" }}>
-        Logout
-      </button>
-    </div>
-  );
-}
+                    <button
+                        onClick={() => navigate("/transactions")}
+                        className="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600"
+                    >
+                        📊 View Transactions
+                    </button>
+
+                    <button
+                        onClick={handleLogout}
+                        className="w-full bg-red-500 text-white p-3 rounded-lg hover:bg-red-600"
+                    >
+                        🚪 Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export default Dashboard;
