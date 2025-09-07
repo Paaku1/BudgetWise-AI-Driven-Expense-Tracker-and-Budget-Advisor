@@ -30,7 +30,7 @@ public class SecurityConfig {
         this.userService = userService;
     }
 
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -49,7 +49,7 @@ public class SecurityConfig {
                     return corsConfiguration;
                 }))
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/login/**", "/register/**", "/refresh_token/**").permitAll()
+                        .requestMatchers("/login/**", "/register/**", "/refresh_token/**","/dashboard").permitAll()
                         .requestMatchers("/admin_only/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
