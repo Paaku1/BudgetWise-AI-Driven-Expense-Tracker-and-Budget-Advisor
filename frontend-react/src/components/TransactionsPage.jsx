@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
-import { getTransactions, deleteTransaction, updateTransaction } from "../services/transactions";
+import { useNavigate } from "react-router-dom";
+import {
+    getTransactions,
+    deleteTransaction,
+    updateTransaction,
+} from "../services/transactions";
+import "../styles/TransactionsPage.css";
 
 const TransactionsPage = () => {
     const [transactions, setTransactions] = useState([]);
     const [editing, setEditing] = useState(null);
     const [editData, setEditData] = useState({});
     const userId = localStorage.getItem("userId");
+    const firstname=localStorage.getItem("firstname");
+    const navigate = useNavigate();
 
     const fetchTransactions = async () => {
         try {
@@ -29,7 +37,7 @@ const TransactionsPage = () => {
 
     const handleEdit = (transaction) => {
         setEditing(transaction.id);
-        setEditData({ ...transaction }); // copy transaction into editData
+        setEditData({ ...transaction });
     };
 
     const handleSave = async () => {
@@ -47,137 +55,137 @@ const TransactionsPage = () => {
     };
 
     return (
-        <div className="p-6">
-            <h2 className="text-xl font-bold mb-4">Transactions</h2>
-            <table className="w-full border-collapse border">
-                <thead>
-                <tr className="bg-gray-200">
-                    <th className="border p-2">Date</th>
-                    <th className="border p-2">Type</th>
-                    <th className="border p-2">Category</th>
-                    <th className="border p-2">Amount</th>
-                    <th className="border p-2">Description</th>
-                    <th className="border p-2">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {transactions.map((t) => (
-                    <tr key={t.id}>
-                        {/* Date */}
-                        <td className="border p-2">
-                            {editing === t.id ? (
-                                <input
-                                    type="date"
-                                    name="date"
-                                    value={editData.date || ""}
-                                    onChange={handleChange}
-                                    className="border px-2"
-                                />
-                            ) : (
-                                t.date
-                            )}
-                        </td>
+        <div className="transactions-container">
+            {/* Navbar */}
+            <nav className="transactions-navbar">
+                <h1 className="transactions-title">WELCOME, {firstname}</h1>
+                <button className="back-btn" onClick={() => navigate("/dashboard")}>
+                    ← Back to Dashboard
+                </button>
+            </nav>
 
-                        {/* Type */}
-                        <td className="border p-2">
-                            {editing === t.id ? (
-                                <select
-                                    name="type"
-                                    value={editData.type || ""}
-                                    onChange={handleChange}
-                                    className="border px-2"
-                                >
-                                    <option value="INCOME">INCOME</option>
-                                    <option value="EXPENSE">EXPENSE</option>
-                                </select>
-                            ) : (
-                                t.type
-                            )}
-                        </td>
+            {/* Table */}
+            <div className="transactions-content">
+                <h2 className="transactions-heading">Transactions</h2>
+                <table className="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {transactions.map((t) => (
+                            <tr key={t.id}>
+                                <td>
+                                    {editing === t.id ? (
+                                        <input
+                                            type="date"
+                                            name="date"
+                                            value={editData.date || ""}
+                                            onChange={handleChange}
+                                        />
+                                    ) : (
+                                        t.date
+                                    )}
+                                </td>
 
-                        {/* Category */}
-                        <td className="border p-2">
-                            {editing === t.id ? (
-                                <input
-                                    type="text"
-                                    name="category"
-                                    value={editData.category || ""}
-                                    onChange={handleChange}
-                                    className="border px-2"
-                                />
-                            ) : (
-                                t.category
-                            )}
-                        </td>
+                                <td>
+                                    {editing === t.id ? (
+                                        <select
+                                            name="type"
+                                            value={editData.type || ""}
+                                            onChange={handleChange}
+                                        >
+                                            <option value="INCOME">INCOME</option>
+                                            <option value="EXPENSE">EXPENSE</option>
+                                        </select>
+                                    ) : (
+                                        t.type
+                                    )}
+                                </td>
 
-                        {/* Amount */}
-                        <td className="border p-2">
-                            {editing === t.id ? (
-                                <input
-                                    type="number"
-                                    name="amount"
-                                    value={editData.amount || ""}
-                                    onChange={handleChange}
-                                    className="border px-2"
-                                />
-                            ) : (
-                                t.amount
-                            )}
-                        </td>
+                                <td>
+                                    {editing === t.id ? (
+                                        <input
+                                            type="text"
+                                            name="category"
+                                            value={editData.category || ""}
+                                            onChange={handleChange}
+                                        />
+                                    ) : (
+                                        t.category
+                                    )}
+                                </td>
 
-                        {/* Description */}
-                        <td className="border p-2">
-                            {editing === t.id ? (
-                                <input
-                                    type="text"
-                                    name="description"
-                                    value={editData.description || ""}
-                                    onChange={handleChange}
-                                    className="border px-2"
-                                />
-                            ) : (
-                                t.description
-                            )}
-                        </td>
+                                <td>
+                                    {editing === t.id ? (
+                                        <input
+                                            type="number"
+                                            name="amount"
+                                            value={editData.amount || ""}
+                                            onChange={handleChange}
+                                        />
+                                    ) : (
+                                        t.amount
+                                    )}
+                                </td>
 
-                        {/* Actions */}
-                        <td className="border p-2">
-                            {editing === t.id ? (
-                                <>
-                                    <button
-                                        onClick={handleSave}
-                                        className="bg-green-500 text-white px-2 py-1 mr-2 rounded"
-                                    >
-                                        Save
-                                    </button>
-                                    <button
-                                        onClick={() => setEditing(null)}
-                                        className="bg-gray-400 text-white px-2 py-1 rounded"
-                                    >
-                                        Cancel
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <button
-                                        onClick={() => handleEdit(t)}
-                                        className="bg-blue-500 text-white px-2 py-1 mr-2 rounded"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(t.id)}
-                                        className="bg-red-500 text-white px-2 py-1 rounded"
-                                    >
-                                        Delete
-                                    </button>
-                                </>
-                            )}
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+                                <td>
+                                    {editing === t.id ? (
+                                        <input
+                                            type="text"
+                                            name="description"
+                                            value={editData.description || ""}
+                                            onChange={handleChange}
+                                        />
+                                    ) : (
+                                        t.description
+                                    )}
+                                </td>
+
+                                <td>
+                                    {editing === t.id ? (
+                                        <>
+                                            <button
+                                                onClick={handleSave}
+                                                className="save-btn"
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                onClick={() => setEditing(null)}
+                                                className="cancel-btn"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={() => handleEdit(t)}
+                                                className="edit-btn"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(t.id)}
+                                                className="delete-btn"
+                                            >
+                                                Delete
+                                            </button>
+                                        </>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

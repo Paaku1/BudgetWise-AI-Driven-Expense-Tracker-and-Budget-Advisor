@@ -1,0 +1,103 @@
+/* Container */
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9fafc 0%, #e0f2fe 100%);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar */
+.dashboard-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #2563eb, #1e40af);
+  color: white;
+  padding: 15px 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.navbar-welcome {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  background: #16a34a; /* Tailwind green-600 */
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.logout-btn:hover {
+  background: #15803d; /* green-700 */
+  transform: scale(1.05);
+}
+
+/* Body */
+.dashboard-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 80px 20px;
+  flex-wrap: wrap;
+}
+
+/* Cards */
+.dashboard-card {
+  width: 280px;
+  height: 200px;
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  padding: 25px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.dashboard-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.dashboard-card h3 {
+  font-size: 20px;
+  margin: 12px 0 6px;
+  font-weight: 700;
+}
+.dashboard-card p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Card Icons */
+.card-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Card Styles */
+.add-card {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+.view-card {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-body {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .dashboard-card {
+    width: 90%;
+  }
+}
