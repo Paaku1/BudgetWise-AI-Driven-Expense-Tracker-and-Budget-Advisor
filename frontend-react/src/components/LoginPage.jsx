@@ -25,6 +25,7 @@ function LoginPage() {
       const data = await response.json();
       localStorage.setItem("accessToken", data.token);
       localStorage.setItem("userId", data.userId);
+      localStorage.setItem("firstname",data.firstname);
 
       navigate("/dashboard");
         // eslint-disable-next-line no-unused-vars
