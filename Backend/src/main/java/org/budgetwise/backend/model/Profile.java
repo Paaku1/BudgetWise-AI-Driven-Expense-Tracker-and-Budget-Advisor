@@ -9,15 +9,16 @@ import lombok.Data;
 public class Profile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "user_id")
+    private int userId;
 
     private Double income;
     private Double savings;
     private Double targetExpenses;
 
     @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "id")
+    @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
 
 }

@@ -4,6 +4,7 @@ package org.budgetwise.backend.service;
 import org.budgetwise.backend.model.AuthenticationResponse;
 import org.budgetwise.backend.model.User;
 import org.budgetwise.backend.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,5 +55,9 @@ public class AuthService {
         User user = userRepository.findUserByUsername(request.getUsername()).orElseThrow();
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token, user.getId(),user.getFirstName());
+    }
+
+    public String getUsername(int userId) {
+        return userRepository.getUserById(userId).getUsername();
     }
 }

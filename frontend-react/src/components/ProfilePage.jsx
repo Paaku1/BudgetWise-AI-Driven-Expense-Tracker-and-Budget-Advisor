@@ -13,7 +13,7 @@ function ProfilePage() {
   const navigate = useNavigate();
 
   // fetch token + userId from localStorage
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId");
 
   const handleChange = (e) => {

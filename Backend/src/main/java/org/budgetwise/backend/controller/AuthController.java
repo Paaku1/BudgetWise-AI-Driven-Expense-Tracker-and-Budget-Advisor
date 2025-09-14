@@ -1,6 +1,7 @@
 package org.budgetwise.backend.controller;
 
 
+import org.apache.coyote.Response;
 import org.budgetwise.backend.model.AuthenticationResponse;
 import org.budgetwise.backend.model.User;
 import org.budgetwise.backend.repository.UserRepository;
@@ -45,4 +46,8 @@ public class AuthController {
         return ResponseEntity.ok("Welcome to Home page");
     }
 
+    @GetMapping("/{userId}/username")
+    public ResponseEntity<String> getUsername(@PathVariable int userId){
+        return ResponseEntity.ok(authService.getUsername(userId));
+    }
 }

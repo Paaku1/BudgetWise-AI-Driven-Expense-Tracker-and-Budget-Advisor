@@ -1,5 +1,6 @@
 package org.budgetwise.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +28,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // ✅ This is the key to breaking the serialization loop
     private Profile profile;
 
     // UserDetails implementation methods

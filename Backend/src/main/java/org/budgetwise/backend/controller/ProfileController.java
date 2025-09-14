@@ -1,5 +1,6 @@
 package org.budgetwise.backend.controller;
 
+import org.budgetwise.backend.dto.ProfileDTO;
 import org.budgetwise.backend.model.Profile;
 import org.budgetwise.backend.service.ProfileService;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,12 @@ public class ProfileController {
     public ResponseEntity<Profile> getProfile(@PathVariable int userId) {
         return ResponseEntity.ok(profileService.getProfile(userId));
     }
+
+    @GetMapping("/{userId}/username")
+    public ResponseEntity<ProfileDTO> getProfileByUserId(@PathVariable int userId) {
+        return ResponseEntity.ok(profileService.getProfileByUserId(userId));
+    }
+
+
 }
 
