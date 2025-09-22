@@ -3,7 +3,9 @@ package org.budgetwise.backend.controller;
 import org.budgetwise.backend.dto.TransactionDTO;
 import org.budgetwise.backend.model.Transaction;
 import org.budgetwise.backend.service.TransactionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,14 +40,20 @@ public class TransactionController {
 
     // ✅ Delete transaction
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTransaction(@PathVariable int id) {
+    public ResponseEntity<Void> deleteTransaction(@PathVariable int id) {
         transactionService.deleteTransaction(id);
-        return ResponseEntity.ok("Transaction deleted successfully");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // ✅ Use 204 No Content
     }
 
     // ✅ Get transactions by user
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable int userId) {
         return ResponseEntity.ok(transactionService.getTransactionsByUser(userId));
     }
+
+    @GetMapping("/{userId}/category")
+    public ResponseEntity<List<String>> getCategories(@PathVariable int userId){
+        return ResponseEntity.ok(transactionService.getCategories(userId));
+    }
+
 }

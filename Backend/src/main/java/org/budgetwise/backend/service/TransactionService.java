@@ -3,8 +3,10 @@ package org.budgetwise.backend.service;
 import org.budgetwise.backend.dto.TransactionDTO;
 import org.budgetwise.backend.model.Transaction;
 import org.budgetwise.backend.model.User;
+import org.budgetwise.backend.repository.ProfileRepository;
 import org.budgetwise.backend.repository.TransactionRepository;
 import org.budgetwise.backend.repository.UserRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +16,12 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, ProfileRepository profileRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
     }
 
     public TransactionDTO addTransaction(int userId, Transaction transaction) {
@@ -48,5 +52,9 @@ public class TransactionService {
                 .stream()
                 .map(TransactionDTO::fromEntity)
                 .toList();
+    }
+
+    public List<String> getCategories(int userId) {
+        return transactionRepository.findDistinctCategoriesByUserId(userId);
     }
 }
