@@ -58,6 +58,6 @@ public class AuthService {
     }
 
     public String getUsername(int userId) {
-        return userRepository.getUserById(userId).getUsername();
+        return userRepository.findUsersById(userId).getUsername();
     }
 }

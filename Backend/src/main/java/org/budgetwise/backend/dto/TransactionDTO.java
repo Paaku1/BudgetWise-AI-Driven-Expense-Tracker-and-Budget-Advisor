@@ -12,11 +12,8 @@ public record TransactionDTO(
         BigDecimal amount,
         String category,
         String description,
-        LocalDate date,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDate date
 ) {
-    // ✅ Convert Entity → DTO
     public static TransactionDTO fromEntity(Transaction t) {
         return new TransactionDTO(
                 t.getId(),
@@ -24,9 +21,8 @@ public record TransactionDTO(
                 t.getAmount(),
                 t.getCategory(),
                 t.getDescription(),
-                t.getDate(),
-                t.getCreatedAt(),
-                t.getUpdatedAt()
+                t.getDate()
+
         );
     }
 }

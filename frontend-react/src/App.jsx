@@ -7,6 +7,7 @@ import HomePage from "./components/HomePage";
 import ProfilePage from "./components/ProfilePage.jsx";
 import DailyLogPage from "./components/DailyLogPage.jsx";
 import TransactionsPage from "./components/TransactionsPage.jsx";
+import BudgetsPage from "./components/BudgetPage.jsx"
 
 function App() {
   return (
@@ -26,6 +27,9 @@ function App() {
           />
           <Route path="/daily-log" element={<DailyLogPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/budgets" element={<BudgetsPage />} />
+          {/*<Route path="/savings" element={<SavingsPage />} />*/}
+
       </Routes>
     </Router>
   );

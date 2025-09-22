@@ -32,6 +32,5 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getProfileByUserId(userId));
     }
 
-
 }
 
