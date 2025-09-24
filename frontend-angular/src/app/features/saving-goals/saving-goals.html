@@ -16,17 +16,32 @@
   } @else {
     @for (goal of savingGoals; track goal.id) {
       <div class="goal-card">
-        <div class="goal-header">
-          <h4>{{ goal.category }}</h4>
-          <span class="goal-amount">{{ goal.savedAmount | currency:'INR' }} / {{ goal.targetAmount | currency:'INR' }}</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" [style.width.%]="(goal.savedAmount / goal.targetAmount) * 100"></div>
-        </div>
-        <div class="goal-footer">
-          <span>Deadline: {{ goal.deadline | date }}</span>
-          <span>{{ (goal.savedAmount / goal.targetAmount) | percent }}</span>
-        </div>
+        @if (editingGoal?.id === goal.id) {
+          <div class="edit-form-container">
+            <input type="text" [(ngModel)]="editData.category" name="category" placeholder="Category" required />
+            <input type="number" [(ngModel)]="editData.targetAmount" name="targetAmount" placeholder="Target Amount" required />
+            <div class="edit-actions">
+              <button class="save-btn btn-sm" (click)="handleSave()">Save</button>
+              <button class="cancel-btn btn-sm" (click)="handleCancel()">Cancel</button>
+            </div>
+          </div>
+        } @else {
+          <div class="goal-header">
+            <h4>{{ goal.category }}</h4>
+            <span class="goal-amount">{{ goal.savedAmount | currency:'INR' }} / {{ goal.targetAmount | currency:'INR' }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="(goal.savedAmount / goal.targetAmount) * 100"></div>
+          </div>
+          <div class="goal-footer">
+            <span>Deadline: {{ goal.deadline | date }}</span>
+            <div class="actions-group">
+              <span>{{ (goal.savedAmount / goal.targetAmount) | percent }} achieved</span>
+              <button class="edit-btn btn-sm" (click)="handleEdit(goal)">Edit</button>
+              <button class="delete-btn btn-sm" (click)="handleDelete(goal.id)">Delete</button>
+            </div>
+          </div>
+        }
       </div>
     }
   }

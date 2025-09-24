@@ -71,6 +71,12 @@ button {
   border: 1px solid transparent;
 }
 
+.btn-sm {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
 button[type="submit"],
 .dashboard-container button,
 .home-container button {

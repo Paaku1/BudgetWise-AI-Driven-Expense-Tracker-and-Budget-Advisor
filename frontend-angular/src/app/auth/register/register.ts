@@ -18,11 +18,21 @@ export class RegisterComponent {
   lastName = '';
   username = '';
   password = '';
+  confirmPassword = ''; // ✅ Add confirmPassword property
   role = 'USER';
+  error = ''; // ✅ Add error property
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit(): void {
+    this.error = ''; // Reset error message on new submission
+
+    // ✅ Add validation check
+    if (this.password !== this.confirmPassword) {
+      this.error = 'Passwords do not match.';
+      return; // Stop the submission if passwords don't match
+    }
+
     const userData: User = {
       firstName: this.firstName,
       lastName: this.lastName,
@@ -33,12 +43,12 @@ export class RegisterComponent {
 
     this.authService.register(userData).subscribe({
       next: (res) => {
-        this.authService.saveAuthData(res.token, res.userId);
+        this.authService.saveAuthData(res.token, res.userId, res.firstname);
         this.router.navigate(['/auth/profile']);
       },
       error: (err) => {
         console.error('Registration failed', err);
-        alert('Registration failed, try again');
+        this.error = err.error;
       }
     });
   }

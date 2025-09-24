@@ -1,0 +1,5 @@
+// Add this to create space between buttons
+td:last-child {
+  display: flex;
+  gap: 0.5rem; // Adds space between items
+}

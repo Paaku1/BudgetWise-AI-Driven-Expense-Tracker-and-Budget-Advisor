@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-budget-tracker',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, PercentPipe, DatePipe, BudgetFormComponent, FormsModule],
+  imports: [CommonModule, CurrencyPipe, PercentPipe, BudgetFormComponent, FormsModule],
   templateUrl: './budget-tracker.html',
   styleUrl: './budget-tracker.scss'
 })

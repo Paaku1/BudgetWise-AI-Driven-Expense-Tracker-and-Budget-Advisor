@@ -3,6 +3,7 @@ import {Router, RouterLink} from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import {FormsModule} from '@angular/forms';
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
@@ -12,6 +13,7 @@ import {FormsModule} from '@angular/forms';
   ],
   styleUrls: ['./login.scss']
 })
+
 export class LoginComponent {
   username = '';
   password = '';
@@ -23,7 +25,7 @@ export class LoginComponent {
     this.authService.login({ username: this.username, password: this.password })
       .subscribe({
         next: (res) => {
-          this.authService.saveAuthData(res.token, res.userId);
+          this.authService.saveAuthData(res.token, res.userId, res.firstname);
           this.router.navigate(['/dashboard']);
         },
         error: () => {

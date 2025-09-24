@@ -3,9 +3,8 @@
     <p>Loading user profile...</p>
   } @else if (userProfile) {
     <div class="profile-section">
-      <h2>Welcome, {{ userProfile.username }}</h2>
+      <h2>Welcome, {{ firstname | titlecase}}</h2>
     </div>
-
     <div class="card-container">
       <div class="card">
         <h3>Total Income</h3>
@@ -26,7 +25,11 @@
     <div class="modal">
       <div class="modal-content">
         <span class="close" (click)="isFormVisible = false">&times;</span>
-        <app-transaction-form [prefilledCategory]="prefilledCategory" (transactionAdded)="onTransactionAdded($event)" (closeForm)="isFormVisible = false"></app-transaction-form>
+        <app-transaction-form
+          [prefilledCategory]="prefilledCategory"
+          (transactionAdded)="onTransactionAdded($event)"
+          (closeForm)="isFormVisible = false">
+        </app-transaction-form>
       </div>
     </div>
   }
@@ -36,15 +39,23 @@
       <h3>Recent Transactions</h3>
       <button (click)="onAddTransaction()">Add New Transaction</button>
     </div>
-    <app-transactions-list [transactions]="transactions"></app-transactions-list>
+    <app-transactions-list
+      [transactions]="transactions"
+      (transactionUpdated)="refreshAllData()"
+      (transactionDeleted)="refreshAllData()">
+    </app-transactions-list>
   </div>
 
   <div class="dashboard-bottom-sections">
     <div class="section-half">
-      <app-budget-tracker (addTransactionForCategory)="onAddTransactionForCategory($event)"></app-budget-tracker>
+      <app-budget-tracker #budgetTracker (addTransactionForCategory)="onAddTransactionForCategory($event)"></app-budget-tracker>
     </div>
     <div class="section-half">
-      <app-saving-goals></app-saving-goals>
+      <app-saving-goals
+        #savingGoalsTracker
+        (goalUpdated)="refreshAllData()"
+        (goalDeleted)="refreshAllData()">
+      </app-saving-goals>
     </div>
   </div>
 </div>

@@ -4,9 +4,12 @@ import org.budgetwise.backend.dto.BudgetDTO;
 import org.budgetwise.backend.model.Budget;
 import org.budgetwise.backend.model.User;
 import org.budgetwise.backend.repository.BudgetRepository;
+import org.budgetwise.backend.repository.TransactionRepository;
 import org.budgetwise.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -14,19 +17,29 @@ public class BudgetService {
 
     private final BudgetRepository budgetRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
-    public BudgetService(BudgetRepository budgetRepository, UserRepository userRepository) {
+    public BudgetService(BudgetRepository budgetRepository, UserRepository userRepository, TransactionRepository transactionRepository) {
         this.budgetRepository = budgetRepository;
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     // ✅ Create new budget
+    @Transactional // ✅ Add transactional annotation
     public Budget createBudget(int userId, Budget budget) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         budget.setUser(user);
+
+        // ✅ Calculate the initial spent amount from existing transactions
+        BigDecimal totalSpent = transactionRepository.calculateTotalSpentForCategory(userId, budget.getCategory());
+        budget.setSpentAmount(totalSpent.doubleValue());
+
         return budgetRepository.save(budget);
     }
+
+    // ... rest of the service methods remain the same ...
 
     // ✅ Update budget
     public Budget updateBudget(int budgetId, Budget updatedBudget) {

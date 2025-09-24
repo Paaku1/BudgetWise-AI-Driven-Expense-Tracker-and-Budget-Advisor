@@ -21,27 +21,27 @@
             <input type="text" [(ngModel)]="editData.category" name="category" placeholder="Category" required />
             <input type="number" [(ngModel)]="editData.limitAmount" name="limitAmount" placeholder="Amount" required />
             <div class="edit-actions">
-              <button class="save-btn" (click)="handleSave()">Save</button>
-              <button class="cancel-btn" (click)="handleCancel()">Cancel</button>
+              <button class="save-btn btn-sm" (click)="handleSave()">Save</button>
+              <button class="cancel-btn btn-sm" (click)="handleCancel()">Cancel</button>
             </div>
           </div>
         } @else {
           <div class="budget-header">
             <h4>{{ budget.category }}</h4>
-            <div class="budget-actions">
-              <span class="budget-amount">{{ budget.spentAmount | currency:'INR' }} / {{ budget.limitAmount | currency:'INR' }}</span>
-              <button class="add-transaction-btn" (click)="onAddTransaction(budget.category)">New Transaction</button>
-            </div>
+            <span class="budget-amount">{{ budget.spentAmount | currency:'INR' }} / {{ budget.limitAmount | currency:'INR' }}</span>
           </div>
           <div class="progress-bar">
-            <div class="progress-fill" [ngClass]="{'over-budget': budget.spentAmount > budget.limitAmount}" [style.width.%]="(budget.spentAmount / budget.limitAmount) * 100"></div>
+            <div
+              class="progress-fill"
+              [ngClass]="{'over-budget': budget.spentAmount > budget.limitAmount}"
+              [style.width.%]="(budget.spentAmount / budget.limitAmount) * 100">
+            </div>
           </div>
           <div class="budget-footer">
             <span>{{ (budget.spentAmount / budget.limitAmount) | percent }} spent</span>
             <div class="actions-group">
-              <span>{{ budget.startDate | date }} - {{ budget.endDate | date }}</span>
-              <button class="edit-btn" (click)="handleEdit(budget)">Edit</button>
-              <button class="delete-btn" (click)="handleDelete(budget.id)">Delete</button>
+              <button class="edit-btn btn-sm" (click)="handleEdit(budget)">Edit</button>
+              <button class="delete-btn btn-sm" (click)="handleDelete(budget.id)">Delete</button>
             </div>
           </div>
         }

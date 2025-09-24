@@ -19,14 +19,19 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/register`, user);
   }
 
-  saveAuthData(token: string, userId: number): void {
+  saveAuthData(token: string, userId: number, firstname: any): void {
     localStorage.setItem('accessToken', token);
     localStorage.setItem('userId', userId.toString());
+    localStorage.setItem('firstname', firstname);
+  }
+  getFirstName(){
+    return localStorage.getItem("firstname");
   }
 
   logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userId');
+    localStorage.removeItem('firstname');
   }
 
   getToken(): string | null {
