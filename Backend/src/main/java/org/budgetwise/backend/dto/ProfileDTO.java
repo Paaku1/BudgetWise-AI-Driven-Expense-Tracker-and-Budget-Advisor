@@ -13,6 +13,8 @@ public class ProfileDTO {
     private double savings;
     private double targetExpenses;
     private String username;
+    private String firstName; // ✅ Add this
+    private String lastName;  // ✅ Add this
 
     public static ProfileDTO fromEntity(Profile p) {
         return new ProfileDTO(
@@ -20,7 +22,9 @@ public class ProfileDTO {
                 p.getIncome(),
                 p.getTargetExpenses(),
                 p.getSavings(),
-                p.getUser().getUsername()
+                p.getUser().getUsername(),
+                p.getUser().getFirstName(), // ✅ Get the first name
+                p.getUser().getLastName()   // ✅ Get the last name
         );
     }
 }

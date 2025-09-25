@@ -8,6 +8,7 @@ import org.budgetwise.backend.model.User;
 import org.budgetwise.backend.repository.ProfileRepository;
 import org.budgetwise.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -51,7 +52,9 @@ public class ProfileService {
                 profile.getIncome(),
                 profile.getSavings(),
                 profile.getTargetExpenses(),
-                profile.getUser().getUsername() // ✅ Get the username from the User entity
+                profile.getUser().getUsername(),
+                profile.getUser().getFirstName(), // ✅ Get the first name
+                profile.getUser().getLastName()   // ✅ Get the last name// ✅ Get the username from the User entity
         );
     }
 
@@ -70,6 +73,21 @@ public class ProfileService {
         Profile savedProfile = profileRepository.save(existingProfile);
 
         // ✅ 4. Convert the saved entity to a DTO and return it
+        return ProfileDTO.fromEntity(savedProfile);
+    }
+
+    @Transactional
+    public ProfileDTO updateProfile(int userId, ProfileDTO profileDTO) {
+        Profile existingProfile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found for user with ID: " + userId));
+
+        // Update the fields from the DTO
+        existingProfile.setIncome(profileDTO.getIncome());
+        existingProfile.setSavings(profileDTO.getSavings());
+        existingProfile.setTargetExpenses(profileDTO.getTargetExpenses());
+
+        // Save the updated profile and return it as a DTO
+        Profile savedProfile = profileRepository.save(existingProfile);
         return ProfileDTO.fromEntity(savedProfile);
     }
 
