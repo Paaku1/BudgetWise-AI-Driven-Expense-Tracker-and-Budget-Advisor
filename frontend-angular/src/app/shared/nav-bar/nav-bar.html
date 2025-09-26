@@ -7,9 +7,10 @@
       <li><a routerLink="/auth/login" routerLinkActive="active">Login</a></li>
       <li><a routerLink="/auth/register" routerLinkActive="active">Register</a></li>
     }
-
     @if(isLoggedIn()) {
       <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
+      <li><a routerLink="/transactions" routerLinkActive="active">Transactions</a></li>
+      <li><a routerLink="/analysis/expenses" routerLinkActive="active">Analysis</a></li>
       <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
       <li><a (click)="logout()" class="logout-link">Logout</a></li>
     }

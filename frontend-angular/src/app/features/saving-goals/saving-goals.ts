@@ -17,6 +17,8 @@ export class SavingGoalsComponent implements OnInit {
   // ✅ Add EventEmitters
   @Output() goalUpdated = new EventEmitter<void>();
   @Output() goalDeleted = new EventEmitter<void>();
+  @Output() addTransactionForCategory = new EventEmitter<string>();
+
 
   savingGoals: SavingGoal[] = [];
   isGoalFormVisible = false;
@@ -31,6 +33,10 @@ export class SavingGoalsComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchGoals();
+  }
+
+  onAddTransaction(category: string): void {
+    this.addTransactionForCategory.emit(category);
   }
 
   fetchGoals(): void {
@@ -51,7 +57,6 @@ export class SavingGoalsComponent implements OnInit {
     this.fetchGoals(); // Refresh the list after a new goal is added
   }
 
-  // ✅ Add Edit, Save, Cancel, and Delete handlers
   handleEdit(goal: SavingGoal): void {
     this.editingGoal = goal;
     this.editData = { ...goal };

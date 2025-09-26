@@ -5,4 +5,5 @@ export interface Details{
   income: number;
   savings: number;
   targetExpenses: number;
+  totalSpendThisMonth?: number;
 }

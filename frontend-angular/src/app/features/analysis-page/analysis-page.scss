@@ -1,0 +1,201 @@
+// Reusable placeholder for a card-style element
+%card-style {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.analysis-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      color: #007bff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+  }
+
+  .tab-switcher {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+
+    button {
+      flex: 1;
+      padding: 0.75rem;
+      border: none;
+      background-color: transparent;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #6c757d;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease-in-out;
+
+      &.active {
+        color: #007bff;
+        border-bottom-color: #007bff;
+      }
+    }
+  }
+
+  .top-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .overall-summary-container {
+    &.full-width {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .summary-card {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+
+    h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    p {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  .monthly-progress {
+    @extend %card-style;
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
+    .progress-bar {
+      background-color: #e9ecef;
+      border-radius: 0.5rem;
+      height: 20px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #007bff;
+      border-radius: 0.5rem;
+      transition: width 0.5s ease;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 2rem;
+  }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .sidebar-content {
+    @extend %card-style;
+    height: fit-content;
+
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .chart-box {
+    @extend %card-style;
+
+    .chart-switcher {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      background-color: #e9ecef;
+      border-radius: 8px;
+      padding: 0.25rem;
+
+      button {
+        flex: 1;
+        padding: 0.5rem;
+        border: none;
+        background-color: transparent;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        &.active {
+          background-color: #fff;
+          color: #007bff;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+      }
+    }
+  }
+
+  .transaction-section {
+    margin-top: 2rem;
+  }
+
+  // Responsive adjustments for smaller screens
+  @media (max-width: 992px) {
+    .top-section, .content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar-content {
+      grid-row: auto;
+    }
+  }
+}

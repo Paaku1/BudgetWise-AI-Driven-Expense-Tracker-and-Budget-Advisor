@@ -5,21 +5,53 @@
     <div class="profile-section">
       <h2>Welcome, {{ firstname | titlecase}}</h2>
     </div>
+    <app-cash-flow-summary></app-cash-flow-summary>
     <div class="card-container">
-      <div class="card">
-        <h3>Total Income</h3>
-        <p>{{ userProfile.income | currency:'INR' }}</p>
-      </div>
-      <div class="card">
-        <h3>Total Savings</h3>
-        <p>{{ userProfile.savings | currency:'INR' }}</p>
-      </div>
-      <div class="card">
-        <h3>Target Expenses</h3>
-        <p>{{ userProfile.targetExpenses | currency:'INR' }}</p>
-      </div>
+      <a routerLink="/analysis/income" class="card-link">
+        <div class="card">
+          <h3>Total Income</h3>
+          <p>{{ userProfile.income | currency:'INR' }}</p>
+          <span class="card-footer">View Analysis &rarr;</span>
+        </div>
+      </a>
+      <a routerLink="/analysis/savings" class="card-link">
+        <div class="card">
+          <h3>Total Savings</h3>
+          <p>{{ userProfile.savings | currency:'INR' }}</p>
+          <span class="card-footer">View Analysis &rarr;</span>
+        </div>
+      </a>
+      <a routerLink="/analysis/expenses" class="card-link">
+        <div class="card">
+          <h3>Monthly Spend</h3>
+          <p class="spend-tracker">
+            <span>{{ userProfile.totalSpendThisMonth | currency:'INR' }}</span>
+            <span class="target">/ {{ userProfile.targetExpenses | currency:'INR' }}</span>
+          </p>
+          <span class="card-footer">View Analysis &rarr;</span>
+        </div>
+      </a>
     </div>
   }
+
+  <div class="dashboard-bottom-sections">
+    <div class="section-half">
+      <app-budget-tracker
+        #budgetTracker
+        (budgetDeleted)="refreshAllData()"
+        (budgetUpdated)="refreshAllData()"
+        (addTransactionForCategory)="onAddTransactionForCategory($event)">
+      </app-budget-tracker>
+    </div>
+    <div class="section-half">
+      <app-saving-goals
+        #savingGoalsTracker
+        (goalUpdated)="refreshAllData()"
+        (goalDeleted)="refreshAllData()"
+        (addTransactionForCategory)="onAddTransactionForCategory($event)"> </app-saving-goals>
+
+    </div>
+  </div>
 
   @if (isFormVisible) {
     <div class="modal">
@@ -37,7 +69,10 @@
   <div class="transactions-section">
     <div class="transactions-header">
       <h3>Recent Transactions</h3>
-      <button (click)="onAddTransaction()">Add New Transaction</button>
+      <div class="header-actions">
+        <a routerLink="/transactions" class="view-all-link">View All &rarr;</a>
+        <button (click)="onAddTransaction()">Add New Transaction</button>
+      </div>
     </div>
     <app-transactions-list
       [transactions]="transactions"
@@ -46,16 +81,5 @@
     </app-transactions-list>
   </div>
 
-  <div class="dashboard-bottom-sections">
-    <div class="section-half">
-      <app-budget-tracker #budgetTracker (addTransactionForCategory)="onAddTransactionForCategory($event)"></app-budget-tracker>
-    </div>
-    <div class="section-half">
-      <app-saving-goals
-        #savingGoalsTracker
-        (goalUpdated)="refreshAllData()"
-        (goalDeleted)="refreshAllData()">
-      </app-saving-goals>
-    </div>
-  </div>
+
 </div>

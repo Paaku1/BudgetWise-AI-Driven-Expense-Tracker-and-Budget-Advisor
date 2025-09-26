@@ -6,12 +6,15 @@ import org.budgetwise.backend.repository.BudgetRepository; // Import BudgetRepos
 import org.budgetwise.backend.repository.SavingGoalRepository;
 import org.budgetwise.backend.repository.TransactionRepository;
 import org.budgetwise.backend.repository.UserRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Import Transactional
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -116,5 +119,27 @@ public class TransactionService {
             savingGoal.setSavedAmount(totalSaved.doubleValue());
             savingGoalRepository.save(savingGoal);
         }
+    }
+
+    public List<TransactionDTO> getFilteredTransactions(int userId, TransactionType type, String category, LocalDate startDate, LocalDate endDate) {
+        Specification<Transaction> spec = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user").get("id"), userId);
+
+        if (type != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"), type));
+        }
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("category")), "%" + category.toLowerCase() + "%"));
+        }
+        if (startDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("date"), startDate));
+        }
+        if (endDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("date"), endDate));
+        }
+
+        return transactionRepository.findAll(spec).stream()
+                .map(TransactionDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 }

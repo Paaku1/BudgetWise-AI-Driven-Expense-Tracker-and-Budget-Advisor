@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Transaction} from '../../shared/models/transaction';
 import {AuthService} from './auth.service';
@@ -36,5 +36,25 @@ export class TransactionService {
     const userId = this.authService.getUserId();
     return this.http.get(`${this.url}/${userId}/category`);
   }
+
+  getFilteredTransactions(userId: number, filters: any): Observable<Transaction[]> {
+    let params = new HttpParams().set('userId', userId.toString());
+
+    if (filters.type) {
+      params = params.set('type', filters.type);
+    }
+    if (filters.category) {
+      params = params.set('category', filters.category);
+    }
+    if (filters.startDate) {
+      params = params.set('startDate', filters.startDate);
+    }
+    if (filters.endDate) {
+      params = params.set('endDate', filters.endDate);
+    }
+
+    return this.http.get<Transaction[]>(`${this.url}/filter`, { params });
+  }
+
 
 }

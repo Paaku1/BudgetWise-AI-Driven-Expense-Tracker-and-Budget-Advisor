@@ -2,12 +2,15 @@ package org.budgetwise.backend.controller;
 
 import org.budgetwise.backend.dto.TransactionDTO;
 import org.budgetwise.backend.model.Transaction;
+import org.budgetwise.backend.model.TransactionType;
 import org.budgetwise.backend.service.TransactionService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -54,6 +57,17 @@ public class TransactionController {
     @GetMapping("/{userId}/category")
     public ResponseEntity<List<String>> getCategories(@PathVariable int userId){
         return ResponseEntity.ok(transactionService.getCategories(userId));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<TransactionDTO>> getFilteredTransactions(
+            @RequestParam int userId,
+            @RequestParam(required = false) TransactionType type,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        List<TransactionDTO> transactions = transactionService.getFilteredTransactions(userId, type, category, startDate, endDate);
+        return ResponseEntity.ok(transactions);
     }
 
 }

@@ -18,11 +18,13 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final AnalysisService analysisService;
 
-    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository, AuthService authService) {
+    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository, AuthService authService, AnalysisService analysisService) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.authService = authService;
+        this.analysisService = analysisService;
     }
 
     public Profile createProfile(int userId, Profile request) {
@@ -37,43 +39,17 @@ public class ProfileService {
         return profileRepository.save(request);
     }
 
-    public Profile getProfile(int userId) {
-        return profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
-    }
-
     public ProfileDTO getProfileByUserId(int userId) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new RuntimeException("Profile not found for user"));
 
-        // ✅ Convert the Profile entity to a ProfileDTO
-        return new ProfileDTO(
-                profile.getUserId(),
-                profile.getIncome(),
-                profile.getSavings(),
-                profile.getTargetExpenses(),
-                profile.getUser().getUsername(),
-                profile.getUser().getFirstName(), // ✅ Get the first name
-                profile.getUser().getLastName()   // ✅ Get the last name// ✅ Get the username from the User entity
-        );
-    }
+        ProfileDTO dto = ProfileDTO.fromEntity(profile);
 
-    public ProfileDTO editTransaction(int id, ProfileDTO updatedProfile) {
-        // ✅ 1. Find the existing transaction by its ID
-        Profile existingProfile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + id));
+        // ✅ Get the monthly spend and add it to the DTO
+        double totalSpend = analysisService.getExpenseSummary(userId).getTotalSpendThisMonth();
+        dto.setTotalSpendThisMonth(totalSpend);
 
-        // ✅ 2. Update the fields of the existing transaction with the new data
-        existingProfile.setIncome(updatedProfile.getIncome());
-        existingProfile.setSavings(updatedProfile.getSavings());
-        existingProfile.setTargetExpenses(updatedProfile.getTargetExpenses());
-
-
-        // ✅ 3. Save the updated transaction to the database
-        Profile savedProfile = profileRepository.save(existingProfile);
-
-        // ✅ 4. Convert the saved entity to a DTO and return it
-        return ProfileDTO.fromEntity(savedProfile);
+        return dto;
     }
 
     @Transactional

@@ -64,7 +64,12 @@
                   name="amount"
                 />
               } @else {
-                {{ t.amount | currency:'INR' }}
+                <span [ngClass]="{
+                  'income-amount': t.type === 'INCOME',
+                  'expense-amount': t.type === 'EXPENSE'
+                }">
+                  {{ t.type === 'INCOME' ? '+' : '-' }} {{ t.amount | currency:'INR' }}
+                </span>
               }
             </td>
             <td>

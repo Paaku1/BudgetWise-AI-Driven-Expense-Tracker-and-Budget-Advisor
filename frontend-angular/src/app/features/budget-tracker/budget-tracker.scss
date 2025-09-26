@@ -32,6 +32,33 @@
       font-weight: 600;
       color: #343a40;
     }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .add-btn {
+      background-color: #e6f2ff;
+      color: #007bff;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 1.25rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #cce5ff;
+      }
+    }
   }
 
   .progress-bar {
