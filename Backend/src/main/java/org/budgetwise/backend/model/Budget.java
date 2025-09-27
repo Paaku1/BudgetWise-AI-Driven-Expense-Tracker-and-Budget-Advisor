@@ -1,13 +1,19 @@
 package org.budgetwise.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.budgetwise.backend.dto.BudgetDTO;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "budgets")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Budget {
 
     @Id
@@ -16,6 +22,7 @@ public class Budget {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)
@@ -31,6 +38,7 @@ public class Budget {
     private LocalDate startDate;
 
     @Column(nullable = false)
-    private LocalDate EndDate;
+    private LocalDate endDate;
+
 }
 

@@ -13,6 +13,8 @@ $heading-color: #1a1a1a;
 $success-color: #28a745;
 $danger-color: #dc3545;
 
+
+
 :root {
   --primary-color: #{$primary-color};
   --primary-light: #{$primary-light};
@@ -69,6 +71,12 @@ button {
   font-weight: 600;
   transition: background-color 0.3s ease, transform 0.2s ease;
   border: 1px solid transparent;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 button[type="submit"],

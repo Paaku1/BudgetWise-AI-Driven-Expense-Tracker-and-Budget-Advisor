@@ -1,0 +1,143 @@
+<div class="analysis-container">
+  @if(isTransactionFormVisible) {
+    <div class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="isTransactionFormVisible = false">&times;</span>
+        <app-transaction-form
+          (transactionAdded)="onTransactionAdded()"
+          (closeForm)="isTransactionFormVisible = false">
+        </app-transaction-form>
+      </div>
+    </div>
+  }
+  <div class="page-header">
+    <h1>Financial Analysis</h1>
+    <a routerLink="/dashboard" class="back-link">&larr; Back to Dashboard</a>
+  </div>
+
+  <div class="tab-switcher">
+    <button (click)="selectTab('expenses')" [class.active]="activeTab === 'expenses'">Expenses</button>
+    <button (click)="selectTab('income')" [class.active]="activeTab === 'income'">Income</button>
+    <button (click)="selectTab('savings')" [class.active]="activeTab === 'savings'">Savings</button>
+  </div>
+
+  @if(activeTab === 'expenses') {
+    <div class="tab-content">
+      <div class="top-section">
+        <div class="overall-summary-container">
+          <div class="summary-card">
+            <h4>Total Spend This Month</h4>
+            <p>{{ expenseSummary?.totalSpendThisMonth | currency:'INR' }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>Average Daily Spend</h4>
+            <p>{{ expenseSummary?.averageDailySpend | currency:'INR' }}</p>
+          </div>
+          <div class="summary-card">
+            <h4>Highest Spending Category</h4>
+            <p>{{ expenseSummary?.highestSpendingCategory || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="left-column">
+          <div class="bento-card medium top-categories">
+            <h2>Top Categories</h2>
+            <app-top-categories [categories]="expenseByCategory"></app-top-categories>
+          </div>
+
+          <div class="bento-card medium category-details-card">
+            <h2>Selected Category Details</h2>
+            @if(selectedExpenseCategorySummary) {
+              <div class="overall-summary-container full-width">
+                <div class="summary-card">
+                  <h4>Total Spend ({{ selectedExpenseCategorySummary.highestSpendingCategory }})</h4>
+                  <p>{{ selectedExpenseCategorySummary.totalSpendThisMonth | currency:'INR' }}</p>
+                </div>
+                <div class="summary-card">
+                  <h4>Avg. Transaction</h4>
+                  <p>{{ selectedExpenseCategorySummary.averageDailySpend | currency:'INR' }}</p>
+                </div>
+              </div>
+            } @else {
+              <p class="details-prompt">Click a category on a chart for details.</p>
+            }
+          </div>
+        </div>
+
+        <div class="main-content">
+          <div class="chart-box">
+            <div class="chart-switcher">
+              <button (click)="selectChartType('pie')" [class.active]="selectedChartType === 'pie'">Pie Chart</button>
+              <button (click)="selectChartType('bar')" [class.active]="selectedChartType === 'bar'">Bar Chart</button>
+            </div>
+            @if(selectedChartType === 'pie') {
+              <app-pie-chart [data]="expenseByCategory" (categoryClicked)="onCategorySelected($event)"></app-pie-chart>
+            }
+            @if(selectedChartType === 'bar') {
+              <app-bar-chart [data]="expenseByCategory" [label]="'Expenses'" (categoryClicked)="onCategorySelected($event)"></app-bar-chart>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }  @if(activeTab === 'income') {
+    <div class="tab-content">
+      @if(incomeSummary) {
+        <div class="overall-summary-container full-width">
+          <div class="summary-card"><h4>Total Income This Month</h4><p>{{ incomeSummary.totalIncomeThisMonth | currency:'INR' }}</p></div>
+          <div class="summary-card"><h4>Highest Income Source</h4><p>{{ incomeSummary.highestIncomeCategory }}</p></div>
+        </div>
+      }
+      <div class="content-grid">
+        <div class="main-content">
+          <div class="chart-box">
+            <div class="chart-switcher">
+              <button (click)="selectChartType('pie')" [class.active]="selectedChartType === 'pie'">Pie Chart</button>
+              <button (click)="selectChartType('bar')" [class.active]="selectedChartType === 'bar'">Bar Chart</button>
+            </div>
+            @if(selectedChartType === 'pie') {
+              <app-pie-chart [data]="incomeByCategory" (categoryClicked)="onCategorySelected($event)"></app-pie-chart>
+            }
+            @if(selectedChartType === 'bar') {
+              <app-bar-chart [data]="incomeByCategory" [label]="'Income'" (categoryClicked)="onCategorySelected($event)"></app-bar-chart>
+            }
+          </div>
+        </div>
+        <div class="sidebar-content">
+          <h2>Category Details</h2>
+          @if(selectedIncomeCategorySummary) {
+            <div class="summary-card">
+              <h4>Total Income ({{ selectedIncomeCategorySummary.highestIncomeCategory }})</h4>
+              <p>{{ selectedIncomeCategorySummary.totalIncomeThisMonth | currency:'INR' }}</p>
+            </div>
+          } @else {
+            <p class="details-prompt">Click a category on a chart for details.</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+
+  @if(activeTab === 'savings') {
+    <div class="tab-content">
+      @if(savingsSummary) {
+        <div class="overall-summary-container">
+          <div class="summary-card"><h4>Total Saved This Month</h4><p>{{ savingsSummary.totalSavedThisMonth | currency:'INR' }}</p></div>
+          <div class="summary-card"><h4>Goals in Progress</h4><p>{{ savingsSummary.goalsInProgress }}</p></div>
+          <div class="summary-card"><h4>Goals Met</h4><p>{{ savingsSummary.goalsMet }}</p></div>
+        </div>
+      }
+
+      <div class="savings-goals-detail-section">
+        <h2>Savings Goal Progress</h2>
+
+        <app-saving-goals [goals]="savingGoals" [showActions]="false"></app-saving-goals>
+
+      </div>
+
+    </div>
+  }
+</div>

@@ -1,4 +1,24 @@
-<app-nav-bar/>
+<app-nav-bar></app-nav-bar>
+@if(isLoggedIn()){
+  <div class="animation-wrapper">
+    <ul>
+      <li>💰</li>
+      <li>💸</li>
+      <li>📈</li>
+      <li>💳</li>
+      <li>🪙</li>
+      <li>💵</li>
+      <li>🏦</li>
+      <li>💲</li>
+      <li>🧾</li>
+      <li>✨</li>
+    </ul>
+  </div>
+}
+
 <div class="app-container">
+  @if(isLoggedIn()){
+    <app-breadcrumb></app-breadcrumb>
+  }
   <router-outlet></router-outlet>
 </div>

@@ -64,7 +64,12 @@
                   name="amount"
                 />
               } @else {
-                {{ t.amount | currency:'INR' }}
+                <span [ngClass]="{
+                  'income-amount': t.type === 'INCOME',
+                  'expense-amount': t.type === 'EXPENSE'
+                }">
+                  {{ t.type === 'INCOME' ? '+' : '-' }} {{ t.amount | currency:'INR' }}
+                </span>
               }
             </td>
             <td>
@@ -81,11 +86,11 @@
             </td>
             <td>
               @if (editingTransaction?.id === t.id) {
-                <button (click)="handleSave()" class="save-btn">Save</button>
-                <button (click)="handleCancel()" class="cancel-btn">Cancel</button>
+                <button (click)="handleSave()" class="save-btn btn-sm">Save</button>
+                <button (click)="handleCancel()" class="cancel-btn btn-sm">Cancel</button>
               } @else {
-                <button (click)="handleEdit(t)" class="edit-btn">Edit</button>
-                <button (click)="handleDelete(t.id)" class="delete-btn">Delete</button>
+                <button (click)="handleEdit(t)" class="edit-btn btn-sm">Edit</button>
+                <button (click)="handleDelete(t.id)" class="delete-btn btn-sm">Delete</button>
               }
             </td>
           </tr>

@@ -68,29 +68,6 @@ export class TransactionFormComponent implements OnInit {
       this.isNewCategory = false;
     }
   }
-  onDelete(category: string){
-    if (!category) {
-      console.warn('deleteCategory called with empty category');
-      return;
-    }
-
-    const existed = this.categories.includes(category);
-
-    // Remove the category immutably
-    this.categories = this.categories.filter(c => c !== category);
-
-    if (!existed) {
-      console.warn(`Category not found: ${category}`);
-      return;
-    }
-
-    // If the deleted category was selected, reset selection state
-    if (this.transaction.category === category) {
-      this.transaction.category = '';
-      this.isNewCategory = false;
-    }
-
-  }
 
   onSubmit(): void {
     const userId = this.authService.getUserId();

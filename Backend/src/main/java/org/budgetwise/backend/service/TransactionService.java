@@ -1,50 +1,102 @@
 package org.budgetwise.backend.service;
 
 import org.budgetwise.backend.dto.TransactionDTO;
-import org.budgetwise.backend.model.Transaction;
-import org.budgetwise.backend.model.User;
-import org.budgetwise.backend.repository.ProfileRepository;
+import org.budgetwise.backend.model.*;
+import org.budgetwise.backend.repository.BudgetRepository; // Import BudgetRepository
+import org.budgetwise.backend.repository.SavingGoalRepository;
 import org.budgetwise.backend.repository.TransactionRepository;
 import org.budgetwise.backend.repository.UserRepository;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Import Transactional
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
-    private final ProfileRepository profileRepository;
+    private final BudgetRepository budgetRepository; // Inject BudgetRepository
+    private final SavingGoalRepository savingGoalRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, ProfileRepository profileRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, BudgetRepository budgetRepository, SavingGoalRepository savingGoalRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
-        this.profileRepository = profileRepository;
+        this.budgetRepository = budgetRepository; // Add to constructor
+        this.savingGoalRepository = savingGoalRepository;
     }
 
+    @Transactional
     public TransactionDTO addTransaction(int userId, Transaction transaction) {
         User user = userRepository.findById(userId).orElseThrow();
         transaction.setUser(user);
-        return TransactionDTO.fromEntity(transactionRepository.save(transaction));
+        Transaction savedTransaction = transactionRepository.save(transaction);
+
+        // ✅ Update budget or savings goal based on transaction type
+        if (savedTransaction.getType() == TransactionType.EXPENSE) {
+            updateBudgetForCategory(userId, savedTransaction.getCategory());
+        } else if (savedTransaction.getType() == TransactionType.INCOME) {
+            updateSavingGoalForCategory(userId, savedTransaction.getCategory());
+        }
+
+        return TransactionDTO.fromEntity(savedTransaction);
     }
 
+    @Transactional
     public TransactionDTO editTransaction(int id, Transaction updatedTransaction) {
         Transaction existing = transactionRepository.findById(id).orElseThrow();
+        String oldCategory = existing.getCategory();
 
         existing.setType(updatedTransaction.getType());
         existing.setAmount(updatedTransaction.getAmount());
         existing.setCategory(updatedTransaction.getCategory());
         existing.setDescription(updatedTransaction.getDescription());
         existing.setDate(updatedTransaction.getDate());
-        existing.setUpdatedAt(updatedTransaction.getUpdatedAt());
 
-        return TransactionDTO.fromEntity(transactionRepository.save(existing));
+        Transaction savedTransaction = transactionRepository.save(existing);
+
+        // Update budget for the new category
+        updateBudgetForCategory(savedTransaction.getUser().getId(), savedTransaction.getCategory());
+
+        // If the category was changed, update the old budget as well
+        if (!oldCategory.equals(savedTransaction.getCategory())) {
+            updateBudgetForCategory(savedTransaction.getUser().getId(), oldCategory);
+        }
+
+        return TransactionDTO.fromEntity(savedTransaction);
     }
 
+    @Transactional
     public void deleteTransaction(int id) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+        int userId = transaction.getUser().getId();
+        String category = transaction.getCategory();
+        TransactionType type = transaction.getType();
+
         transactionRepository.deleteById(id);
+
+        // ✅ Update budget or savings goal after deletion
+        if (type == TransactionType.EXPENSE) {
+            updateBudgetForCategory(userId, category);
+        } else if (type == TransactionType.INCOME) {
+            updateSavingGoalForCategory(userId, category);
+        }
+    }
+
+    private void updateBudgetForCategory(int userId, String category) {
+        Optional<Budget> budgetOpt = budgetRepository.findByUserIdAndCategory(userId, category);
+        if (budgetOpt.isPresent()) {
+            Budget budget = budgetOpt.get();
+            BigDecimal totalSpent = transactionRepository.calculateTotalSpentForCategory(userId, category);
+            budget.setSpentAmount(totalSpent.doubleValue());
+            budgetRepository.save(budget);
+        }
     }
 
     public List<TransactionDTO> getTransactionsByUser(int userId) {
@@ -56,5 +108,38 @@ public class TransactionService {
 
     public List<String> getCategories(int userId) {
         return transactionRepository.findDistinctCategoriesByUserId(userId);
+    }
+
+    // ✅ Add a new private method to update savings goals
+    private void updateSavingGoalForCategory(int userId, String category) {
+        Optional<SavingGoal> savingGoalOpt = savingGoalRepository.findByUserIdAndCategory(userId, category);
+        if (savingGoalOpt.isPresent()) {
+            SavingGoal savingGoal = savingGoalOpt.get();
+            BigDecimal totalSaved = transactionRepository.calculateTotalSavedForCategory(userId, category);
+            savingGoal.setSavedAmount(totalSaved.doubleValue());
+            savingGoalRepository.save(savingGoal);
+        }
+    }
+
+    public List<TransactionDTO> getFilteredTransactions(int userId, TransactionType type, String category, LocalDate startDate, LocalDate endDate) {
+        Specification<Transaction> spec = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user").get("id"), userId);
+
+        if (type != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"), type));
+        }
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("category")), "%" + category.toLowerCase() + "%"));
+        }
+        if (startDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("date"), startDate));
+        }
+        if (endDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("date"), endDate));
+        }
+
+        return transactionRepository.findAll(spec).stream()
+                .map(TransactionDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 }

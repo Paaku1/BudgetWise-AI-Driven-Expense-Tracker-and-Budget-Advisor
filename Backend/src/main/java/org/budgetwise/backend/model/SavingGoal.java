@@ -1,5 +1,6 @@
 package org.budgetwise.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore; // ✅ Add this import
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class SavingGoal {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore // ✅ Add this annotation
     private User user;
 
     @Column(nullable = false)

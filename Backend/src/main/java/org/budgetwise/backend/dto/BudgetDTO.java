@@ -11,6 +11,7 @@ public class BudgetDTO {
     private double limitAmount;
     private LocalDate startDate;
     private LocalDate endDate;
+    private double spentAmount;
 
     public static BudgetDTO fromEntity(org.budgetwise.backend.model.Budget budget) {
         BudgetDTO dto = new BudgetDTO();
@@ -19,6 +20,7 @@ public class BudgetDTO {
         dto.setLimitAmount(budget.getLimitAmount());
         dto.setStartDate(budget.getStartDate());
         dto.setEndDate(budget.getEndDate());
+        dto.setSpentAmount(budget.getSpentAmount());
         return dto;
     }
 }

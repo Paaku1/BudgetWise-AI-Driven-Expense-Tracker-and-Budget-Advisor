@@ -1,14 +1,12 @@
 .navbar {
-  background-color: #333;
+  background-color: #ffffff; /* ✅ Clean white background */
   padding: 1rem 2rem;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border-bottom: 1px solid #dee2e6; /* ✅ Subtle border for separation */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Optional: soft shadow for depth */
 }
 
 .nav-brand a {
-  color: white;
+  color: #007bff; /* ✅ Primary blue for the brand */
   text-decoration: none;
   font-size: 1.5rem;
   font-weight: bold;
@@ -23,18 +21,22 @@
 }
 
 .nav-links a {
-  color: white;
+  color: #333; /* ✅ Dark text for links */
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s;
 }
 
 .nav-links a:hover {
-  color: #ddd;
+  color: #0056b3; /* ✅ Darker blue for hover effect */
 }
 
 .nav-links a.active {
-  text-decoration: underline;
+  color: #007bff; /* ✅ Primary blue for the active link */
+  font-weight: bold;
+}
+.nav-links a.logout-link:hover {
+  color: #dc3545; /* A standard red color */
 }
 
 .nav-links li:last-child a {

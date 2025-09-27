@@ -35,9 +35,9 @@ public class BudgetController {
     }
 
     @DeleteMapping("/{budgetId}")
-    public ResponseEntity<String> deleteBudget(@PathVariable int budgetId) {
+    public ResponseEntity<Void> deleteBudget(@PathVariable int budgetId) { // Change return type to ResponseEntity<Void>
         budgetService.deleteBudget(budgetId);
-        return ResponseEntity.ok("Budget deleted successfully!");
+        return ResponseEntity.noContent().build(); // ✅ Return 204 No Content
     }
 
     @GetMapping("/user/{userId}")
