@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { ProfileService } from '../../core/services/profile.service';
 import {Details} from '../../shared/models/details';
+import {BreadcrumbService} from '../../core/services/breadcrumb.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -20,11 +21,16 @@ export class ProfilePageComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
     this.loadUserProfile();
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Dashboard', url: '/dashboard' },
+      { label: 'Profile', url: '' } // Last item has no URL
+    ]);
   }
 
   loadUserProfile(): void {

@@ -6,7 +6,9 @@ import org.budgetwise.backend.service.AnalysisService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/analysis")
@@ -57,5 +59,28 @@ public class AnalysisController {
     @GetMapping("/cash-flow/{userId}")
     public ResponseEntity<CashFlowDTO> getCashFlowSummary(@PathVariable int userId) {
         return ResponseEntity.ok(analysisService.getCashFlowSummary(userId));
+    }
+
+    @GetMapping("/income-expense-trend/{userId}")
+    public ResponseEntity<TrendDataDTO> getIncomeVsExpenseTrend(@PathVariable int userId) {
+        return ResponseEntity.ok(analysisService.getIncomeVsExpenseTrend(userId));
+    }
+
+    @GetMapping("/top-expense-categories/{userId}")
+    public ResponseEntity<List<CategorySpendingDTO>> getTopExpenseCategories(@PathVariable int userId) {
+        return ResponseEntity.ok(analysisService.getTopExpenseCategories(userId));
+    }
+
+    @GetMapping("/savings-by-category/{userId}")
+    public ResponseEntity<List<CategorySpendingDTO>> getSavingsByCategory(@PathVariable int userId) {
+        return ResponseEntity.ok(analysisService.getSavingsByCategory(userId));
+    }
+
+    @GetMapping("/expense-heatmap/{userId}")
+    public ResponseEntity<Map<LocalDate, Double>> getExpenseHeatMapData(
+            @PathVariable int userId,
+            @RequestParam int year,
+            @RequestParam int month) {
+        return ResponseEntity.ok(analysisService.getExpenseHeatMapData(userId, year, month));
     }
 }

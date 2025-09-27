@@ -6,6 +6,14 @@ import { Transaction } from '../../../shared/models/transaction';
 import { TransactionService } from '../../../core/services/transaction.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { TransactionListComponent } from '../transaction-list/transaction-list';
+import {BreadcrumbService} from '../../../core/services/breadcrumb.service';
+
+import * as XLSX from 'xlsx'; // ✅ Import for Excel
+import autoTable from 'jspdf-autotable'; // ✅ Import for saving file
+import * as FileSaver from 'file-saver';
+
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 @Component({
   selector: 'app-transactions-page',
@@ -28,10 +36,15 @@ export class TransactionsPageComponent implements OnInit {
 
   constructor(
     private transactionService: TransactionService,
-    private authService: AuthService
+    private authService: AuthService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Dashboard', url: '/dashboard' },
+      { label: 'Transactions', url: '' },
+    ]);
     this.generateMonthList();
     this.applyFilters();
     this.fetchCategories();
@@ -86,4 +99,59 @@ export class TransactionsPageComponent implements OnInit {
   refreshData() {
     this.applyFilters();
   }
+
+  exportToExcel(): void {
+    if (this.transactions.length === 0) {
+      alert('No transactions to export.');
+      return;
+    }
+
+    // Map transactions to a flatter structure for Excel, removing unnecessary fields
+    const dataForExport = this.transactions.map(t => ({
+      Date: new Date(t.date).toLocaleDateString(),
+      Type: t.type,
+      Category: t.category,
+      Amount: t.amount,
+      Description: t.description
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataForExport); //
+    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    this.saveAsExcelFile(excelBuffer, 'BudgetWise_Transactions_Excel');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+    FileSaver.saveAs(data, fileName + '_' + new Date().getTime() + '.xlsx'); //
+  }
+
+  exportToPdf(): void {
+    if (this.transactions.length === 0) {
+      alert('No transactions to export.');
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    const head = [['Date', 'Type', 'Category', 'Amount (INR)', 'Description']];
+    const body = this.transactions.map(t => [
+      new Date(t.date).toLocaleDateString(),
+      t.type,
+      t.category,
+      (t.type === 'EXPENSE' ? '- ' : '+ ') + t.amount.toFixed(2),
+      t.description || ''
+    ]);
+
+    autoTable(doc, {
+      head: head,
+      body: body,
+      startY: 10,
+      headStyles: { fillColor: [0, 123, 255] },
+      margin: { top: 15 }
+    });
+
+    doc.save('BudgetWise_Transactions_PDF.pdf');
+  }
+
 }

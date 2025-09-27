@@ -21,6 +21,7 @@ import { CategorySpending } from '../../../core/services/analysis.service';
 })
 export class PieChartComponent implements OnChanges {
   @Input() data: CategorySpending[] = [];
+  @Input() type: ChartType = 'pie';
   @Output() categoryClicked = new EventEmitter<string>();
 
   public pieChartOptions: ChartOptions = { responsive: true, maintainAspectRatio: false };
@@ -31,6 +32,7 @@ export class PieChartComponent implements OnChanges {
   public pieChartType: ChartType = 'pie';
 
   ngOnChanges(): void {
+    this.pieChartType = this.type;
     if (this.data && this.data.length > 0) {
       this.pieChartData = {
         labels: this.data.map(item => item.category),

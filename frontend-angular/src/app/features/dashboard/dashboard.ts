@@ -12,6 +12,7 @@ import { SavingGoalsComponent } from '../saving-goals/saving-goals';
 import { BudgetTrackerComponent } from '../budget-tracker/budget-tracker';
 import { CashFlowSummaryComponent } from '../cash-flow-summary/cash-flow-summary';
 import { Details } from '../../shared/models/details';
+import {BreadcrumbService} from '../../core/services/breadcrumb.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -45,10 +46,12 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private profileService: ProfileService,
     private transactionService: TransactionService,
-    private router: Router
+    private router: Router,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([{ label: 'Dashboard', url: '/dashboard' }]);
     const userId = this.authService.getUserId();
     if (userId) {
       this.refreshAllData(); // Use the main refresh function on initial load

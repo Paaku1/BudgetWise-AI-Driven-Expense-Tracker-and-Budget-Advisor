@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { CommonModule, CurrencyPipe, PercentPipe, DatePipe } from '@angular/common';
 import { SavingGoal } from '../../shared/models/savingGoal';
 import { SavingGoalService } from '../../core/services/saving-goal.service';
@@ -18,6 +18,8 @@ export class SavingGoalsComponent implements OnInit {
   @Output() goalUpdated = new EventEmitter<void>();
   @Output() goalDeleted = new EventEmitter<void>();
   @Output() addTransactionForCategory = new EventEmitter<string>();
+  @Input() goals: SavingGoal[] = []; // ✅ Fix for the NG8002 error
+  @Input() showActions: boolean = true;
 
 
   savingGoals: SavingGoal[] = [];

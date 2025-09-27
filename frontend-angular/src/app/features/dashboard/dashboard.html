@@ -7,21 +7,21 @@
     </div>
     <app-cash-flow-summary></app-cash-flow-summary>
     <div class="card-container">
-      <a routerLink="/analysis/income" class="card-link">
+      <a routerLink="/analysis/details/income" class="card-link">
         <div class="card">
           <h3>Total Income</h3>
           <p>{{ userProfile.income | currency:'INR' }}</p>
           <span class="card-footer">View Analysis &rarr;</span>
         </div>
       </a>
-      <a routerLink="/analysis/savings" class="card-link">
+      <a routerLink="/analysis/details/savings" class="card-link">
         <div class="card">
           <h3>Total Savings</h3>
           <p>{{ userProfile.savings | currency:'INR' }}</p>
           <span class="card-footer">View Analysis &rarr;</span>
         </div>
       </a>
-      <a routerLink="/analysis/expenses" class="card-link">
+      <a routerLink="/analysis/details/expenses" class="card-link">
         <div class="card">
           <h3>Monthly Spend</h3>
           <p class="spend-tracker">
@@ -70,15 +70,19 @@
     <div class="transactions-header">
       <h3>Recent Transactions</h3>
       <div class="header-actions">
-        <a routerLink="/transactions" class="view-all-link">View All &rarr;</a>
         <button (click)="onAddTransaction()">Add New Transaction</button>
       </div>
     </div>
+
     <app-transactions-list
       [transactions]="transactions"
       (transactionUpdated)="refreshAllData()"
       (transactionDeleted)="refreshAllData()">
     </app-transactions-list>
+
+    <div class="section-footer">
+      <a routerLink="/transactions" class="view-all-link">View All Transactions &rarr;</a>
+    </div>
   </div>
 
 

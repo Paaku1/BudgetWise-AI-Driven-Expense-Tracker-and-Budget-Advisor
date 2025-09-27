@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -197,6 +200,81 @@ public class AnalysisService {
         double moneyLeftToSpend = monthlyIncome - totalExpenses;
 
         return new CashFlowDTO(monthlyIncome, totalExpenses, moneyLeftToSpend);
+    }
+
+    public TrendDataDTO getIncomeVsExpenseTrend(int userId) {
+        LocalDate end = LocalDate.now();
+        LocalDate start = end.minusMonths(5).withDayOfMonth(1);
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndDateBetween(userId, start, end);
+
+        Map<String, Double> monthlyIncome = transactions.stream()
+                .filter(t -> t.getType() == TransactionType.INCOME)
+                .collect(Collectors.groupingBy(
+                        t -> t.getDate().format(DateTimeFormatter.ofPattern("MMM")),
+                        Collectors.summingDouble(t -> t.getAmount().doubleValue())
+                ));
+
+        Map<String, Double> monthlyExpenses = transactions.stream()
+                .filter(t -> t.getType() == TransactionType.EXPENSE)
+                .collect(Collectors.groupingBy(
+                        t -> t.getDate().format(DateTimeFormatter.ofPattern("MMM")),
+                        Collectors.summingDouble(t -> t.getAmount().doubleValue())
+                ));
+
+        List<String> labels = new ArrayList<>();
+        List<Double> incomeData = new ArrayList<>();
+        List<Double> expenseData = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM");
+
+        for (int i = 5; i >= 0; i--) {
+            String month = end.minusMonths(i).format(formatter);
+            labels.add(month);
+            incomeData.add(monthlyIncome.getOrDefault(month, 0.0));
+            expenseData.add(monthlyExpenses.getOrDefault(month, 0.0));
+        }
+
+        return new TrendDataDTO(labels, incomeData, expenseData);
+    }
+
+    public List<CategorySpendingDTO> getTopExpenseCategories(int userId) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        List<Transaction> monthlyExpenses = transactionRepository.findByUserIdAndTypeAndDateBetween(
+                userId, TransactionType.EXPENSE, startOfMonth, today);
+
+        return monthlyExpenses.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::getCategory,
+                        Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add)
+                ))
+                .entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) // Sort descending
+                .limit(5) // Get the top 5
+                .map(entry -> new CategorySpendingDTO(entry.getKey(), entry.getValue().doubleValue()))
+                .collect(Collectors.toList());
+    }
+
+    public List<CategorySpendingDTO> getSavingsByCategory(int userId) {
+        return savingGoalRepository.findByUserId(userId).stream()
+                .map(goal -> new CategorySpendingDTO(goal.getCategory(), goal.getSavedAmount()))
+                .collect(Collectors.toList());
+    }
+
+    public Map<LocalDate, Double> getExpenseHeatMapData(int userId, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTypeAndDateBetween(
+                userId, TransactionType.EXPENSE, startOfMonth, endOfMonth
+        );
+
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::getDate,
+                        Collectors.summingDouble(t -> t.getAmount().doubleValue())
+                ));
     }
 
 

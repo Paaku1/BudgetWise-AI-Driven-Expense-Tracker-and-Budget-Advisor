@@ -31,6 +31,12 @@ export interface CashFlowSummary {
   moneyLeftToSpend: number;
 }
 
+export interface TrendData {
+  labels: string[];
+  incomeData: number[];
+  expenseData: number[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -69,5 +75,25 @@ export class AnalysisService {
 
   getCashFlowSummary(userId: number): Observable<CashFlowSummary> {
     return this.http.get<CashFlowSummary>(`${this.apiUrl}/cash-flow/${userId}`);
+  }
+
+  getIncomeVsExpenseTrend(userId: number): Observable<TrendData> {
+    return this.http.get<TrendData>(`${this.apiUrl}/income-expense-trend/${userId}`);
+  }
+
+  getTopExpenseCategories(userId: number): Observable<CategorySpending[]> {
+    return this.http.get<CategorySpending[]>(`${this.apiUrl}/top-expense-categories/${userId}`);
+  }
+
+  getSavingsByCategory(userId: number): Observable<CategorySpending[]> {
+    return this.http.get<CategorySpending[]>(`${this.apiUrl}/savings-by-category/${userId}`);
+  }
+
+  getExpenseHeatMapData(userId: number, year: number, month: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/expense-heatmap/${userId}`, { params: { year, month } });
+  }
+
+  getMonthlySummary(userId: number): Observable<{income: number, expense: number}> {
+    return this.http.get<{income: number, expense: number}>(`${this.apiUrl}/monthly-summary/${userId}`);
   }
 }

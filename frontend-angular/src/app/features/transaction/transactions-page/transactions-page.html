@@ -1,7 +1,11 @@
 <div class="transactions-page-container">
   <div class="page-header">
     <h1>All Transactions</h1>
-    <a routerLink="/dashboard" class="back-link">&larr; Back to Dashboard</a>
+    <div class="page-actions">
+      <button class="secondary-btn export-excel-btn" (click)="exportToExcel()">Export to Excel</button>
+      <button class="secondary-btn export-pdf-btn" (click)="exportToPdf()">Export to PDF</button>
+      <a routerLink="/dashboard" class="back-link">&larr; Back to Dashboard</a>
+    </div>
   </div>
 
   <div class="filter-container">
@@ -45,11 +49,13 @@
     </div>
   </div>
 
-  <div class="transaction-section">
-    <app-transactions-list
-      [transactions]="transactions"
-      (transactionUpdated)="refreshData()"
-      (transactionDeleted)="refreshData()">
-    </app-transactions-list>
+  <div class="transactions-page-container">
+    <div class="transaction-list-card">
+      <app-transactions-list
+        [transactions]="transactions"
+        (transactionUpdated)="refreshData()"
+        (transactionDeleted)="refreshData()">
+      </app-transactions-list>
+    </div>
   </div>
 </div>

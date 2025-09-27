@@ -11,17 +11,28 @@ import { TransactionListComponent } from '../transaction/transaction-list/transa
 import { UserProfile } from '../../shared/models/userProfile';
 import { ProfileService } from '../../core/services/profile.service';
 import {TransactionFormComponent} from '../transaction/transaction-form/transaction-form';
+import {BreadcrumbService} from '../../core/services/breadcrumb.service';
+import {TopCategoriesComponent} from '../charts/top-categories/top-categories';
+import {SavingGoalsComponent} from '../saving-goals/saving-goals';
+import {SavingGoal} from '../../shared/models/savingGoal';
+import {SavingGoalService} from '../../core/services/saving-goal.service';
 
 
 @Component({
-  selector: 'app-analysis-page',
+  selector: 'app-analysis-detail',
   standalone: true,
   imports: [
-    CommonModule, CurrencyPipe, RouterLink,
-    TransactionListComponent, PieChartComponent, BarChartComponent, TransactionFormComponent
+    CommonModule,
+    CurrencyPipe,
+    RouterLink,
+    PieChartComponent,
+    BarChartComponent,
+    TransactionFormComponent,
+    TopCategoriesComponent,
+    SavingGoalsComponent
   ],
-  templateUrl: './analysis-page.html',
-  styleUrls: ['./analysis-page.scss']
+  templateUrl: './analysis-detail.html',
+  styleUrls: ['./analysis-detail.scss']
 })
 export class AnalysisPageComponent implements OnInit {
   activeTab: 'expenses' | 'income' | 'savings' = 'expenses';
@@ -36,6 +47,8 @@ export class AnalysisPageComponent implements OnInit {
   incomeByCategory: CategorySpending[] = [];
   savingsSummary: SavingsSummary | null = null;
 
+  savingGoals: SavingGoal[] = [];
+
   // ✅ These two properties will hold the details for the sidebar
   selectedExpenseCategorySummary: ExpenseSummary | null = null;
   selectedIncomeCategorySummary: IncomeSummary | null = null;
@@ -46,7 +59,9 @@ export class AnalysisPageComponent implements OnInit {
     private transactionService: TransactionService,
     private authService: AuthService,
     private analysisService: AnalysisService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private breadcrumbService: BreadcrumbService,
+    private savingGoalService: SavingGoalService
   ) {}
 
   ngOnInit(): void {
@@ -55,7 +70,7 @@ export class AnalysisPageComponent implements OnInit {
       if (type === 'income' || type === 'savings' || type === 'expenses') {
         this.selectTab(type);
       } else {
-        this.selectTab('expenses');
+        this.selectTab('expenses'); // Default to expenses
       }
     });
   }
@@ -70,6 +85,14 @@ export class AnalysisPageComponent implements OnInit {
     this.activeTab = tab;
     this.transactions = [];
     this.selectedChartType = 'pie'; // Reset to default view
+
+    const capitalizedType = tab.charAt(0).toUpperCase() + tab.slice(1);
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Dashboard', url: '/dashboard' },
+      { label: 'Analysis', url: '/analysis' },
+      { label: capitalizedType, url: '' }
+    ]);
+
     this.fetchDataForTab();
   }
 
@@ -109,6 +132,16 @@ export class AnalysisPageComponent implements OnInit {
 
   fetchSavingsData(userId: number): void {
     this.analysisService.getSavingsSummary(userId).subscribe(data => this.savingsSummary = data);
+    this.savingGoalService.getGoals(userId).subscribe(goals => {
+      this.savingGoals = goals;
+
+      // OPTIONAL: Sort goals for better display (e.g., in progress first)
+      this.savingGoals.sort((a, b) => {
+        const progressA = a.savedAmount / a.targetAmount;
+        const progressB = b.savedAmount / b.targetAmount;
+        return progressA - progressB; // Low progress first
+      });
+    });
   }
 
   onCategorySelected(category: string): void {

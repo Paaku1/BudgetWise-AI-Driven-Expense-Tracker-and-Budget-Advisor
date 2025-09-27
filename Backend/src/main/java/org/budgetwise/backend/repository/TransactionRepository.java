@@ -32,8 +32,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     BigDecimal calculateTotalSavedForCategory(@Param("userId") int userId, @Param("category") String category);
 
     List<Transaction> findByUserIdAndType(int userId, TransactionType type);
+
     List<Transaction> findByUserIdAndTypeAndDateBetween(int userId, TransactionType type, LocalDate startDate, LocalDate endDate);
 
     List<Transaction> findByUserIdAndTypeAndCategoryAndDateBetween(int userId, TransactionType type, String category, LocalDate startDate, LocalDate endDate);
+
+    List<Transaction> findByUserIdAndDateBetween(int userId, LocalDate startDate, LocalDate endDate);
+
 }
 

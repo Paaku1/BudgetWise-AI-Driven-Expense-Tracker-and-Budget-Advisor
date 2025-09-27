@@ -1,7 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+// app/features/charts/bar-chart/bar-chart.ts
+
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartOptions, ChartType, ChartEvent, ActiveElement } from 'chart.js';
+import { ChartOptions, ChartType } from 'chart.js';
 import { CategorySpending } from '../../../core/services/analysis.service';
 
 @Component({
@@ -11,18 +13,28 @@ import { CategorySpending } from '../../../core/services/analysis.service';
   template: `
     <div class="chart-container">
       <canvas baseChart
-        [data]="barChartData"
-        [type]="'bar'"
-        [options]="barChartOptions"
-        (chartClick)="chartClicked($event)">
+              [data]="barChartData"
+              [type]="'bar'"
+              [options]="barChartOptions"
+              (chartClick)="chartClicked($event)">
       </canvas>
     </div>
-  `
+  `,
+  styles: [`
+    .chart-container {
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+  `]
 })
 export class BarChartComponent implements OnChanges {
   @Input() data: CategorySpending[] = [];
   @Input() label: string = 'Amount';
   @Output() categoryClicked = new EventEmitter<string>();
+
+  // Get a reference to the chart instance
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public barChartOptions: ChartOptions = { responsive: true, maintainAspectRatio: false };
   public barChartData = {
@@ -37,9 +49,17 @@ export class BarChartComponent implements OnChanges {
 
   ngOnChanges(): void {
     if (this.data && this.data.length > 0) {
-      this.barChartData.labels = this.data.map(item => item.category);
-      this.barChartData.datasets[0].data = this.data.map(item => item.totalAmount);
-      this.barChartData.datasets[0].label = this.label;
+      this.barChartData = {
+        labels: this.data.map(item => item.category),
+        datasets: [{
+          ...this.barChartData.datasets[0],
+          data: this.data.map(item => item.totalAmount),
+          label: this.label
+        }]
+      };
+
+      // Manually trigger the chart to update
+      this.chart?.update();
     }
   }
 
