@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 // Define interfaces for the data structures
@@ -95,5 +95,18 @@ export class AnalysisService {
 
   getMonthlySummary(userId: number): Observable<{income: number, expense: number}> {
     return this.http.get<{income: number, expense: number}>(`${this.apiUrl}/monthly-summary/${userId}`);
+  }
+
+  getDailyExpenseTrend(userId: number, year: number, month: number, categories: string[]): Observable<any> {
+    let params = new HttpParams()
+      .set('year', year.toString())
+      .set('month', month.toString());
+
+    // Append each category to the parameters
+    categories.forEach(category => {
+      params = params.append('categories', category);
+    });
+
+    return this.http.get(`${this.apiUrl}/daily-expense-trend/${userId}`, { params });
   }
 }

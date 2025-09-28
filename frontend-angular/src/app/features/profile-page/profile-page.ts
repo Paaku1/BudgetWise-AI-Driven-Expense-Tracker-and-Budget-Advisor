@@ -27,10 +27,12 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserProfile();
-    this.breadcrumbService.setBreadcrumbs([
-      { label: 'Dashboard', url: '/dashboard' },
-      { label: 'Profile', url: '' } // Last item has no URL
-    ]);
+    setTimeout(() => {
+      this.breadcrumbService.setBreadcrumbs([
+        { label: 'Dashboard', url: '/dashboard' },
+        { label: 'Profile', url: '' }
+      ]);
+    });
   }
 
   loadUserProfile(): void {

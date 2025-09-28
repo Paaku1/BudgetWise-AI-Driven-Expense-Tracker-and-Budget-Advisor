@@ -41,10 +41,12 @@ export class TransactionsPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.breadcrumbService.setBreadcrumbs([
-      { label: 'Dashboard', url: '/dashboard' },
-      { label: 'Transactions', url: '' },
-    ]);
+    setTimeout(() => {
+      this.breadcrumbService.setBreadcrumbs([
+        { label: 'Dashboard', url: '/dashboard' },
+        { label: 'Transactions', url: '' }
+      ]);
+    });
     this.generateMonthList();
     this.applyFilters();
     this.fetchCategories();

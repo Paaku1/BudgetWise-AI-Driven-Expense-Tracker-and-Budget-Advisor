@@ -13,7 +13,12 @@
             towards better money management decisions.
           </p>
           <div class="hero-buttons">
-            <a routerLink="/auth/register" class="btn-hero-primary">Start Now</a>
+            @if(loggedIn()){
+              <a routerLink="/dashboard" class="btn-hero-primary">Go to Dashboard</a>
+            } @else {
+              <a routerLink="/dashboard" class="btn-hero-primary">Start Now</a>
+            }
+
           </div>
         </div>
         <div class="hero-image">

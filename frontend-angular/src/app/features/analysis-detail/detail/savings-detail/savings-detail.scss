@@ -1,0 +1,29 @@
+// Located at: frontend-angular/src/app/features/analysis-detail/detail/savings-detail/savings-detail.scss
+
+.overall-summary-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  h4 { margin: 0 0 0.5rem; font-size: 0.9rem; color: #6c757d; }
+  p { margin: 0; font-size: 1.75rem; font-weight: 600; }
+}
+
+.savings-goals-detail-section {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+  h2 {
+    margin-top: 0;
+    font-size: 1.5rem;
+  }
+}

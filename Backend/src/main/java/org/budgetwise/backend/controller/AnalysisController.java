@@ -83,4 +83,21 @@ public class AnalysisController {
             @RequestParam int month) {
         return ResponseEntity.ok(analysisService.getExpenseHeatMapData(userId, year, month));
     }
+
+
+    @GetMapping("/daily-expense-trend/{userId}")
+    public ResponseEntity<MultiDataSetTrendDTO> getDailyExpenseTrend(
+            @PathVariable int userId,
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam List<String> categories) {
+        return ResponseEntity.ok(analysisService.getDailyExpenseTrendForCategories(userId, year, month, categories));
+    }
+
+    // Add this new method anywhere inside your AnalysisController.java file
+
+    @GetMapping("/monthly-summary/{userId}")
+    public ResponseEntity<MonthlySummaryDTO> getMonthlySummary(@PathVariable int userId) {
+        return ResponseEntity.ok(analysisService.getMonthlySummary(userId));
+    }
 }

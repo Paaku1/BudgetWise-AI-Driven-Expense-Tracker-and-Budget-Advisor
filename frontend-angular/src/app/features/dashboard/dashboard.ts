@@ -51,7 +51,11 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.breadcrumbService.setBreadcrumbs([{ label: 'Dashboard', url: '/dashboard' }]);
+    setTimeout(() => {
+      this.breadcrumbService.setBreadcrumbs([
+        { label: 'Dashboard', url: '' }
+      ]);
+    });
     const userId = this.authService.getUserId();
     if (userId) {
       this.refreshAllData(); // Use the main refresh function on initial load

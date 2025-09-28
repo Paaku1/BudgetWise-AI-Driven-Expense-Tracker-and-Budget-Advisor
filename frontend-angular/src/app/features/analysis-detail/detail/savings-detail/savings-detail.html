@@ -1,0 +1,14 @@
+<div class="tab-content">
+  @if(savingsSummary) {
+    <div class="overall-summary-container">
+      <div class="summary-card"><h4>Total Saved This Month</h4><p>{{ savingsSummary.totalSavedThisMonth | currency:'INR' }}</p></div>
+      <div class="summary-card"><h4>Goals in Progress</h4><p>{{ savingsSummary.goalsInProgress }}</p></div>
+      <div class="summary-card"><h4>Goals Met</h4><p>{{ savingsSummary.goalsMet }}</p></div>
+    </div>
+  }
+
+  <div class="savings-goals-detail-section">
+    <h2>Savings Goal Progress</h2>
+    <app-saving-goals [goals]="savingGoals" [showActions]="false"></app-saving-goals>
+  </div>
+</div>

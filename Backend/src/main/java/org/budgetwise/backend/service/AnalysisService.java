@@ -15,10 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -275,6 +272,63 @@ public class AnalysisService {
                         Transaction::getDate,
                         Collectors.summingDouble(t -> t.getAmount().doubleValue())
                 ));
+    }
+
+    // Add this method to your AnalysisService.java
+    public MultiDataSetTrendDTO getDailyExpenseTrendForCategories(int userId, int year, int month, List<String> categories) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTypeAndCategoryInAndDateBetween(
+                userId, TransactionType.EXPENSE, categories, startOfMonth, endOfMonth
+        );
+
+        // Group transactions by category, then by day
+        Map<String, Map<LocalDate, Double>> expensesByCategoryAndDay = transactions.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::getCategory,
+                        Collectors.groupingBy(
+                                Transaction::getDate,
+                                Collectors.summingDouble(t -> t.getAmount().doubleValue())
+                        )
+                ));
+
+        List<String> labels = startOfMonth.datesUntil(endOfMonth.plusDays(1))
+                .map(date -> date.format(DateTimeFormatter.ofPattern("d MMM")))
+                .collect(Collectors.toList());
+
+        List<DataSet> datasets = new ArrayList<>();
+        for (String category : categories) {
+            Map<LocalDate, Double> dailyTotals = expensesByCategoryAndDay.getOrDefault(category, Collections.emptyMap());
+            List<Double> data = new ArrayList<>();
+            for (LocalDate date = startOfMonth; !date.isAfter(endOfMonth); date = date.plusDays(1)) {
+                data.add(dailyTotals.getOrDefault(date, 0.0));
+            }
+            datasets.add(new DataSet(category, data));
+        }
+
+        return new MultiDataSetTrendDTO(labels, datasets);
+    }
+
+    // Add this new method inside your AnalysisService.java file
+
+    public MonthlySummaryDTO getMonthlySummary(int userId) {
+        // Reuse existing methods to gather the data
+        IncomeSummaryDTO incomeSummary = getIncomeSummary(userId);
+        ExpenseSummaryDTO expenseSummary = getExpenseSummary(userId);
+        List<CategorySpendingDTO> topCategories = getTopExpenseCategories(userId);
+        TrendDataDTO trend = getIncomeVsExpenseTrend(userId);
+
+        double netSavings = incomeSummary.getTotalIncomeThisMonth() - expenseSummary.getTotalSpendThisMonth();
+
+        // Build and return the complete summary DTO
+        return MonthlySummaryDTO.builder()
+                .totalIncome(incomeSummary.getTotalIncomeThisMonth())
+                .totalExpenses(expenseSummary.getTotalSpendThisMonth())
+                .netSavings(netSavings)
+                .topSpendingCategories(topCategories)
+                .incomeVsExpenseTrend(trend)
+                .build();
     }
 
 

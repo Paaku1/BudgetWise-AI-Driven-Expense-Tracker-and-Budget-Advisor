@@ -4,18 +4,45 @@
 }
 
 .profile-section {
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   h2 {
     font-size: 2rem;
     font-weight: 600;
   }
 }
 
-.card-container {
+// New Grid Styles for the layout from your drawing
+.dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "cash-summary cash-summary analysis-hub"
+    "total-income monthly-spend analysis-hub";
+  gap: 2rem;
   margin-bottom: 2.5rem;
+}
+
+// Assigning grid areas
+.cash-summary { grid-area: cash-summary; }
+.total-income { grid-area: total-income; }
+.monthly-spend { grid-area: monthly-spend; }
+.analysis-hub { grid-area: analysis-hub; }
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.cash-summary {
+  // Ensure the cash-flow component fills the wrapper
+  app-cash-flow-summary {
+    height: 100%;
+    width: 100%;
+    > div { // Target the inner container of the component
+      height: 100%;
+    }
+  }
 }
 
 .card {
@@ -23,19 +50,21 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   position: relative;
-  padding: 1.5rem 1.5rem 3rem; // Increased bottom padding slightly
-
-  // ✅ Add these lines to center the card's content
+  padding: 1.5rem 1.5rem 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
+  width: 100%;
+  height: 100%; // Make cards fill the grid cell height
 
   h3 {
     margin-top: 0;
     font-size: 1rem;
     color: #0086f8;
   }
+
   p {
     margin-bottom: 0;
     font-size: 2rem;
@@ -46,7 +75,7 @@
   .spend-tracker {
     display: flex;
     align-items: baseline;
-    justify-content: center; // ✅ Center the items within the spend tracker
+    justify-content: center;
     .target {
       font-size: 1.25rem;
       font-weight: 400;
@@ -58,22 +87,23 @@
   .card-footer {
     position: absolute;
     bottom: 1rem;
-    // ✅ Center the footer horizontally
     left: 50%;
     transform: translateX(-50%);
-    width: 100%; // Ensure it has width to center within
-
+    width: 100%;
     font-size: 0.9rem;
     font-weight: 500;
     color: #007bff;
   }
+
+  .analysis-icon {
+    font-size: 3rem;
+    margin: 0.5rem 0;
+  }
 }
 
-// Styles for making the cards clickable links
 .card-link {
   text-decoration: none;
   color: inherit;
-  display: block;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
   &:hover {
@@ -84,13 +114,57 @@
   }
 }
 
-.transactions-section {
-  margin-bottom: 2.5rem;
+// Responsive adjustments for tablet and mobile
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "cash-summary cash-summary"
+      "total-income monthly-spend"
+      "analysis-hub analysis-hub";
+  }
+}
 
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "cash-summary"
+      "total-income"
+      "monthly-spend"
+      "analysis-hub";
+  }
+}
+
+
+// (The rest of your SCSS file for other sections remains the same)
+.dashboard-bottom-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 992px) {
+  .dashboard-bottom-sections {
+    grid-template-columns: 1fr;
+  }
+}
+
+.transactions-section {
   background-color: #ffffff;
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.transactions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  h3 { margin: 0; font-size: 1.5rem; }
 }
 
 .section-footer {
@@ -105,51 +179,101 @@
   text-decoration: none;
   color: #007bff;
   transition: color 0.2s;
-
-  &:hover {
-    color: #0056b3;
-    text-decoration: underline;
-  }
+  &:hover { color: #0056b3; text-decoration: underline; }
 }
 
-.transactions-header {
+.analysis-hub .card {
+  justify-content: space-between; // Aligns header and footer to top and bottom
+  text-align: left; // Align text to the left for the new content
+}
+
+.analysis-hub-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #dee2e6;
+  align-items: flex-start;
+  width: 100%;
 
   h3 {
+    margin-bottom: 0;
+    font-size: 2rem;
+  }
+
+  .analysis-icon {
+    font-size: 2rem;
     margin: 0;
-    font-size: 1.5rem;
   }
+}
 
-  .header-actions {
+.analysis-hub {
+  .card {
+    position: relative;
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
+    text-align: center; // Center all content by default
   }
 
-  .view-all-link {
-    font-weight: 500;
-    text-decoration: none;
-    color: #007bff;
-    &:hover {
-      text-decoration: underline;
+  .analysis-hub-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      text-align: center;
+    }
+
+    .analysis-icon {
+      margin: 0;
+      font-size: 1.5rem;
+      text-align: center;
     }
   }
-}
 
-.dashboard-bottom-sections {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
+  .analysis-hub-content {
+    flex: 1; // Takes up remaining space
+    display: flex;
+    flex-direction: column;
 
-// Responsive adjustments for smaller screens
-@media (max-width: 992px) {
-  .dashboard-bottom-sections {
-    grid-template-columns: 1fr;
+    .hub-description {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin: 1rem 1rem 1rem 1rem;
+      text-align: left; // Center the description
+    }
+
+    .hub-features {
+      font-size: 0.9rem;
+      padding-left: 0; // Remove left padding
+      margin: 0 auto; // Center the list
+      color: #495057;
+      list-style: none; // Remove bullet points for cleaner centered look
+      text-align: left;
+
+      li {
+        margin-bottom: 0.4rem;
+
+        // Optional: Add bullet points back with custom styling
+        &::before {
+          content: "•";
+          color: #007bff;
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .card-footer {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #007bff;
+    text-align: center;
   }
 }
+
+
