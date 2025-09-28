@@ -1,44 +1,38 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartOptions, ChartType } from 'chart.js';
+import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
 
 @Component({
   selector: 'app-line-chart',
   standalone: true,
   imports: [CommonModule, BaseChartDirective],
-  template: `
-    <div class="chart-container">
-      <canvas baseChart
-        [data]="lineChartData"
-        [type]="'line'"
-        [options]="lineChartOptions">
-      </canvas>
-    </div>
-  `,
-  styleUrl: './line-chart.scss'
+  templateUrl: './line-chart.html',
 })
 export class LineChartComponent implements OnChanges {
-  @Input() data: any = {};
+  @Input() data: { labels: string[], datasets: { label: string, data: number[] }[] } = { labels: [], datasets: [] };
 
-  public lineChartOptions: ChartOptions = { responsive: true, maintainAspectRatio: false };
-  public lineChartData = {
-    labels: [] as string[],
-    datasets: [
-      { data: [] as number[], label: 'Income', borderColor: '#28a745', backgroundColor: 'rgba(40, 167, 69, 0.1)', fill: true },
-      { data: [] as number[], label: 'Expense', borderColor: '#dc3545', backgroundColor: 'rgba(220, 53, 69, 0.1)', fill: true }
-    ]
+  // Predefined colors for the chart lines
+  private chartColors: string[] = ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1'];
+
+  public lineChartOptions: ChartOptions = { responsive: true, maintainAspectRatio: true };
+  public lineChartData: { labels: string[], datasets: ChartDataset[] } = {
+    labels: [],
+    datasets: []
   };
   public lineChartType: ChartType = 'line';
 
   ngOnChanges(): void {
-    if (this.data && this.data.labels) {
+    if (this.data && this.data.labels && this.data.datasets) {
       this.lineChartData = {
         labels: this.data.labels,
-        datasets: [
-          { ...this.lineChartData.datasets[0], data: this.data.incomeData },
-          { ...this.lineChartData.datasets[1], data: this.data.expenseData }
-        ]
+        datasets: this.data.datasets.map((dataset, index) => ({
+          ...dataset,
+          borderColor: this.chartColors[index % this.chartColors.length],
+          backgroundColor: `${this.chartColors[index % this.chartColors.length]}33`, // Adds transparency
+          fill: true,
+          tension: 0.3
+        }))
       };
     }
   }

@@ -1,0 +1,71 @@
+// Located at: frontend-angular/src/app/features/analysis-detail/detail/income-detail/income-detail.scss
+
+// Reusing common styles from the expense detail
+.overall-summary-container, .summary-card, .content-grid, .main-content, .chart-box, .chart-switcher, .details-prompt {
+  // These styles can be copied directly from expense-detail.scss
+  // or you can use a shared SCSS partial for a cleaner approach.
+}
+
+.overall-summary-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  &.full-width {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.summary-card {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  h4 { margin: 0 0 0.5rem; font-size: 0.9rem; color: #6c757d; }
+  p { margin: 0; font-size: 1.75rem; font-weight: 600; }
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr; // Simpler grid for income
+  gap: 1.5rem;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.sidebar-content, .chart-box {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.details-prompt { color: #6c757d; }
+
+.chart-switcher {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+  button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    &.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+  }
+}

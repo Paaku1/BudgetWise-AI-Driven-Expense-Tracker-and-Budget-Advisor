@@ -1,21 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { AnalysisService, ExpenseSummary, CategorySpending, IncomeSummary, SavingsSummary } from '../../core/services/analysis.service';
-import { AuthService } from '../../core/services/auth.service';
-import { TransactionService } from '../../core/services/transaction.service';
-import { Transaction } from '../../shared/models/transaction';
-import { PieChartComponent } from '../charts/pie-chart/pie-chart';
-import { BarChartComponent } from '../charts/bar-chart/bar-chart';
-import { TransactionListComponent } from '../transaction/transaction-list/transaction-list';
-import { UserProfile } from '../../shared/models/userProfile';
-import { ProfileService } from '../../core/services/profile.service';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {
+  AnalysisService,
+  ExpenseSummary,
+  CategorySpending,
+  IncomeSummary,
+  SavingsSummary
+} from '../../core/services/analysis.service';
+import {AuthService} from '../../core/services/auth.service';
+import {TransactionService} from '../../core/services/transaction.service';
+import {Transaction} from '../../shared/models/transaction';
+import {PieChartComponent} from '../charts/pie-chart/pie-chart';
+import {BarChartComponent} from '../charts/bar-chart/bar-chart';
+import {TransactionListComponent} from '../transaction/transaction-list/transaction-list';
+import {UserProfile} from '../../shared/models/userProfile';
+import {ProfileService} from '../../core/services/profile.service';
 import {TransactionFormComponent} from '../transaction/transaction-form/transaction-form';
 import {BreadcrumbService} from '../../core/services/breadcrumb.service';
 import {TopCategoriesComponent} from '../charts/top-categories/top-categories';
 import {SavingGoalsComponent} from '../saving-goals/saving-goals';
 import {SavingGoal} from '../../shared/models/savingGoal';
 import {SavingGoalService} from '../../core/services/saving-goal.service';
+import {IncomeDetailComponent} from './detail/income-detail/income-detail';
+import {SavingsDetailComponent} from './detail/savings-detail/savings-detail';
+import {ExpenseDetailComponent} from './detail/expense-detail/expense-detail';
 
 
 @Component({
@@ -23,13 +32,11 @@ import {SavingGoalService} from '../../core/services/saving-goal.service';
   standalone: true,
   imports: [
     CommonModule,
-    CurrencyPipe,
-    RouterLink,
-    PieChartComponent,
-    BarChartComponent,
     TransactionFormComponent,
-    TopCategoriesComponent,
-    SavingGoalsComponent
+    IncomeDetailComponent,
+    SavingsDetailComponent,
+    ExpenseDetailComponent,
+    RouterLink
   ],
   templateUrl: './analysis-detail.html',
   styleUrls: ['./analysis-detail.scss']
@@ -62,7 +69,8 @@ export class AnalysisPageComponent implements OnInit {
     private profileService: ProfileService,
     private breadcrumbService: BreadcrumbService,
     private savingGoalService: SavingGoalService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -83,17 +91,16 @@ export class AnalysisPageComponent implements OnInit {
 
   selectTab(tab: 'expenses' | 'income' | 'savings'): void {
     this.activeTab = tab;
-    this.transactions = [];
-    this.selectedChartType = 'pie'; // Reset to default view
-
     const capitalizedType = tab.charAt(0).toUpperCase() + tab.slice(1);
-    this.breadcrumbService.setBreadcrumbs([
-      { label: 'Dashboard', url: '/dashboard' },
-      { label: 'Analysis', url: '/analysis' },
-      { label: capitalizedType, url: '' }
-    ]);
 
-    this.fetchDataForTab();
+    // This setTimeout is the fix for the NG0100 error
+    setTimeout(() => {
+      this.breadcrumbService.setBreadcrumbs([
+        { label: 'Dashboard', url: '/dashboard' },
+        { label: 'Analysis', url: '/analysis' },
+        { label: capitalizedType, url: '' }
+      ]);
+    });
   }
 
   selectChartType(type: 'pie' | 'bar'): void {
