@@ -2,8 +2,12 @@
   <div class="page-header">
     <h1>All Transactions</h1>
     <div class="page-actions">
+      <input type="file" #fileInput hidden (change)="onFileChange($event)" accept=".xlsx, .xls">
+
       <button class="secondary-btn export-excel-btn" (click)="exportToExcel()">Export to Excel</button>
       <button class="secondary-btn export-pdf-btn" (click)="exportToPdf()">Export to PDF</button>
+      <button class="primary-btn  import-excel-btn" (click)="fileInput.click()">Import Transactions</button>
+
       <a routerLink="/dashboard" class="back-link">&larr; Back to Dashboard</a>
     </div>
   </div>
@@ -15,6 +19,7 @@
         <option value="">All</option>
         <option value="INCOME">Income</option>
         <option value="EXPENSE">Expense</option>
+        <option value="SAVINGS">Savings</option>
       </select>
     </div>
     <div class="filter-group">

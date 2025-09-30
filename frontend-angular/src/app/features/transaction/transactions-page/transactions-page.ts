@@ -52,6 +52,53 @@ export class TransactionsPageComponent implements OnInit {
     this.fetchCategories();
   }
 
+  // ✅ NEW METHOD to handle file import
+  onFileChange(event: any): void {
+    const target: DataTransfer = <DataTransfer>(event.target);
+    if (target.files.length !== 1) {
+      alert('Cannot use multiple files');
+      return;
+    }
+
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      const bstr: string = e.target.result;
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary', cellDates: true });
+      const wsname: string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+      const data = <any[]>(XLSX.utils.sheet_to_json(ws));
+
+      // Map Excel data to Transaction objects
+      const importedTransactions: Transaction[] = data.map(row => {
+        // Basic validation and transformation
+        const type = (row.Type || '').toUpperCase();
+        return {
+          id: 0,
+          date: new Date(row.Date),
+          type: type === 'INCOME' ? 'INCOME' : 'EXPENSE',
+          category: row.Category || 'Uncategorized',
+          amount: parseFloat(row.Amount) || 0,
+          description: row.Description || ''
+        };
+      });
+
+      const userId = this.authService.getUserId();
+      if (userId) {
+        this.transactionService.importTransactions(userId, importedTransactions).subscribe({
+          next: () => {
+            alert('Transactions imported successfully!');
+            this.applyFilters(); // Refresh the list
+          },
+          error: (err) => {
+            console.error('Error importing transactions:', err);
+            alert('Failed to import transactions.');
+          }
+        });
+      }
+    };
+    reader.readAsBinaryString(target.files[0]);
+  }
+
   fetchCategories(): void {
     const userId = this.authService.getUserId();
     if (userId) {

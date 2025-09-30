@@ -1,12 +1,25 @@
 .navbar {
-  background-color: #ffffff; /* ✅ Clean white background */
+  background-color: #ffffff;
   padding: 1rem 2rem;
-  border-bottom: 1px solid #dee2e6; /* ✅ Subtle border for separation */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Optional: soft shadow for depth */
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+// ✅ NEW container to control width and layout
+.navbar-container {
+  max-width: 1200px; // Sets a maximum width for the content
+  margin: 0 auto;      // Centers the container
+  width: 100%;
+
+  // Flexbox properties moved here from .navbar
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
 }
 
 .nav-brand a {
-  color: #007bff; /* ✅ Primary blue for the brand */
+  color: #007bff;
   text-decoration: none;
   font-size: 1.5rem;
   font-weight: bold;
@@ -18,27 +31,31 @@
   gap: 1.5rem;
   margin: 0;
   padding: 0;
+
+  a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #0056b3;
+    }
+
+    &.active {
+      color: #007bff;
+      font-weight: bold;
+    }
+  }
 }
 
-.nav-links a {
-  color: #333; /* ✅ Dark text for links */
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s;
+.nav-links-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.nav-links a:hover {
-  color: #0056b3; /* ✅ Darker blue for hover effect */
-}
-
-.nav-links a.active {
-  color: #007bff; /* ✅ Primary blue for the active link */
-  font-weight: bold;
-}
-.nav-links a.logout-link:hover {
-  color: #dc3545; /* A standard red color */
-}
-
-.nav-links li:last-child a {
+.logout-link:hover {
+  color: #dc3545;
   cursor: pointer;
 }

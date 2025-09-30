@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,13 +22,13 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
-    private final BudgetRepository budgetRepository; // Inject BudgetRepository
+    private final BudgetRepository budgetRepository;
     private final SavingGoalRepository savingGoalRepository;
 
     public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, BudgetRepository budgetRepository, SavingGoalRepository savingGoalRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
-        this.budgetRepository = budgetRepository; // Add to constructor
+        this.budgetRepository = budgetRepository;
         this.savingGoalRepository = savingGoalRepository;
     }
 
@@ -37,35 +38,10 @@ public class TransactionService {
         transaction.setUser(user);
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        // ✅ Update budget or savings goal based on transaction type
         if (savedTransaction.getType() == TransactionType.EXPENSE) {
             updateBudgetForCategory(userId, savedTransaction.getCategory());
-        } else if (savedTransaction.getType() == TransactionType.INCOME) {
+        } else if (savedTransaction.getType() == TransactionType.SAVINGS) {
             updateSavingGoalForCategory(userId, savedTransaction.getCategory());
-        }
-
-        return TransactionDTO.fromEntity(savedTransaction);
-    }
-
-    @Transactional
-    public TransactionDTO editTransaction(int id, Transaction updatedTransaction) {
-        Transaction existing = transactionRepository.findById(id).orElseThrow();
-        String oldCategory = existing.getCategory();
-
-        existing.setType(updatedTransaction.getType());
-        existing.setAmount(updatedTransaction.getAmount());
-        existing.setCategory(updatedTransaction.getCategory());
-        existing.setDescription(updatedTransaction.getDescription());
-        existing.setDate(updatedTransaction.getDate());
-
-        Transaction savedTransaction = transactionRepository.save(existing);
-
-        // Update budget for the new category
-        updateBudgetForCategory(savedTransaction.getUser().getId(), savedTransaction.getCategory());
-
-        // If the category was changed, update the old budget as well
-        if (!oldCategory.equals(savedTransaction.getCategory())) {
-            updateBudgetForCategory(savedTransaction.getUser().getId(), oldCategory);
         }
 
         return TransactionDTO.fromEntity(savedTransaction);
@@ -81,13 +57,62 @@ public class TransactionService {
 
         transactionRepository.deleteById(id);
 
-        // ✅ Update budget or savings goal after deletion
         if (type == TransactionType.EXPENSE) {
             updateBudgetForCategory(userId, category);
-        } else if (type == TransactionType.INCOME) {
+        } else if (type == TransactionType.SAVINGS) {
             updateSavingGoalForCategory(userId, category);
         }
     }
+
+    @Transactional
+    public void importTransactions(int userId, List<Transaction> transactions) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        for (Transaction t : transactions) {
+            t.setUser(user);
+        }
+        transactionRepository.saveAll(transactions);
+
+
+        Set<String> expenseCategories = transactions.stream()
+                .filter(t -> t.getType() == TransactionType.EXPENSE)
+                .map(Transaction::getCategory)
+                .collect(Collectors.toSet());
+
+        Set<String> incomeCategories = transactions.stream()
+                .filter(t -> t.getType() == TransactionType.INCOME)
+                .map(Transaction::getCategory)
+                .collect(Collectors.toSet());
+
+        expenseCategories.forEach(category -> updateBudgetForCategory(userId, category));
+        incomeCategories.forEach(category -> updateSavingGoalForCategory(userId, category));
+    }
+
+    @Transactional
+    public TransactionDTO editTransaction(int id, Transaction updatedTransaction) {
+        Transaction existing = transactionRepository.findById(id).orElseThrow();
+        String oldCategory = existing.getCategory();
+
+        existing.setType(updatedTransaction.getType());
+        existing.setAmount(updatedTransaction.getAmount());
+        existing.setCategory(updatedTransaction.getCategory());
+        existing.setDescription(updatedTransaction.getDescription());
+        existing.setDate(updatedTransaction.getDate());
+
+        Transaction savedTransaction = transactionRepository.save(existing);
+
+
+        updateBudgetForCategory(savedTransaction.getUser().getId(), savedTransaction.getCategory());
+
+        if (!oldCategory.equals(savedTransaction.getCategory())) {
+            updateBudgetForCategory(savedTransaction.getUser().getId(), oldCategory);
+        }
+
+        return TransactionDTO.fromEntity(savedTransaction);
+    }
+
 
     private void updateBudgetForCategory(int userId, String category) {
         Optional<Budget> budgetOpt = budgetRepository.findByUserIdAndCategory(userId, category);
@@ -110,7 +135,6 @@ public class TransactionService {
         return transactionRepository.findDistinctCategoriesByUserId(userId);
     }
 
-    // ✅ Add a new private method to update savings goals
     private void updateSavingGoalForCategory(int userId, String category) {
         Optional<SavingGoal> savingGoalOpt = savingGoalRepository.findByUserIdAndCategory(userId, category);
         if (savingGoalOpt.isPresent()) {

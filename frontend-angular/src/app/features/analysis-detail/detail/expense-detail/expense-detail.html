@@ -62,13 +62,16 @@
         <h3>Daily Spending by Category</h3>
         <input type="month" id="month-select" [(ngModel)]="selectedMonth" (change)="updateMonthlyTrendChart()">
       </div>
+
       <div class="category-list">
         @for(category of allCategories; track category) {
-          <div class="category-item">
-            <input type="checkbox" [id]="category" [checked]="selectedCategories[category]"
-                   (change)="toggleCategory(category)">
-            <label [for]="category">{{ category }}</label>
-          </div>
+          <button
+            type="button"
+            class="category-button"
+            [class.active]="selectedCategories[category]"
+            (click)="toggleCategory(category)">
+            {{ category }}
+          </button>
         }
       </div>
     </div>

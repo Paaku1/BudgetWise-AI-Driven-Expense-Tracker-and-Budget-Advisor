@@ -38,6 +38,7 @@
                 >
                   <option value="INCOME">INCOME</option>
                   <option value="EXPENSE">EXPENSE</option>
+                  <option value="SAVINGS">SAVINGS</option>
                 </select>
               } @else {
                 {{ t.type }}
@@ -66,9 +67,10 @@
               } @else {
                 <span [ngClass]="{
                   'income-amount': t.type === 'INCOME',
-                  'expense-amount': t.type === 'EXPENSE'
+                  'expense-amount': t.type === 'EXPENSE',
+                  'savings-amount': t.type === 'SAVINGS'
                 }">
-                  {{ t.type === 'INCOME' ? '+' : '-' }} {{ t.amount | currency:'INR' }}
+                  {{ t.type === 'INCOME' || 'SAVINGS' ? '+' : '-' }} {{ t.amount | currency:'INR' }}
                 </span>
               }
             </td>

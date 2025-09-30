@@ -23,7 +23,6 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    // ✅ Add a new transaction
     @PostMapping("/{userId}")
     public ResponseEntity<TransactionDTO> addTransaction(
             @PathVariable int userId,
@@ -32,7 +31,13 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.addTransaction(userId, transaction));
     }
 
-    // ✅ Edit transaction
+    @PostMapping("/import/{userId}")
+    public ResponseEntity<Void> importTransactions(@PathVariable int userId, @RequestBody List<Transaction> transactions) {
+        transactionService.importTransactions(userId, transactions);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDTO> editTransaction(
             @PathVariable int id,
@@ -41,14 +46,12 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.editTransaction(id, updatedTransaction));
     }
 
-    // ✅ Delete transaction
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable int id) {
         transactionService.deleteTransaction(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // ✅ Use 204 No Content
     }
 
-    // ✅ Get transactions by user
     @GetMapping("/{userId}")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable int userId) {
         return ResponseEntity.ok(transactionService.getTransactionsByUser(userId));

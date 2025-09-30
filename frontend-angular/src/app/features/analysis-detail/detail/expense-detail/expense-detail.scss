@@ -128,14 +128,34 @@
     }
 
     .category-list {
-      max-height: 250px;
-      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem; // Adds space between the buttons
+      padding-top: 0.5rem;
+    }
 
-      .category-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
+    // ✅ NEW STYLES FOR THE CATEGORY BUTTONS
+    .category-button {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid #dee2e6;
+      border-radius: 20px; // Pill shape
+      background-color: #f8f9fa;
+      color: #495057;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+      }
+
+      &.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
       }
     }
   }

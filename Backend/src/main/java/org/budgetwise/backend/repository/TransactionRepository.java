@@ -15,7 +15,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer>, JpaSpecificationExecutor<Transaction> {
-    // custom queries can be added here
     List<Transaction> findByUser(User user);
 
     List<Transaction> findByUserId(int userId);
@@ -23,12 +22,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     @Query("SELECT DISTINCT t.category FROM Transaction t WHERE t.user.id = :userId")
     List<String> findDistinctCategoriesByUserId(@Param("userId") int userId);
 
-    // ✅ Add this method to sum expenses for a category
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId AND t.category = :category AND t.type = 'EXPENSE'")
     BigDecimal calculateTotalSpentForCategory(@Param("userId") int userId, @Param("category") String category);
 
-    // ✅ Add this new method
-    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId AND t.category = :category AND t.type = 'INCOME'")
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId AND t.category = :category AND t.type = 'SAVINGS'")
     BigDecimal calculateTotalSavedForCategory(@Param("userId") int userId, @Param("category") String category);
 
     List<Transaction> findByUserIdAndType(int userId, TransactionType type);
@@ -39,7 +36,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     List<Transaction> findByUserIdAndDateBetween(int userId, LocalDate startDate, LocalDate endDate);
 
-    // Add this method to TransactionRepository.java
     List<Transaction> findByUserIdAndTypeAndCategoryInAndDateBetween(
             int userId,
             TransactionType type,

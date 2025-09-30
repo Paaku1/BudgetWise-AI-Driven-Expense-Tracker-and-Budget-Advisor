@@ -122,3 +122,7 @@
     flex-grow: 1;
   }
 }
+
+.bento-card.ai-suggestions {
+  grid-column: 1 / 2;
+}
