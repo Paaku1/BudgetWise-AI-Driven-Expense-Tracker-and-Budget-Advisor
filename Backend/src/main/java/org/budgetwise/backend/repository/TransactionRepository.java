@@ -25,6 +25,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId AND t.category = :category AND t.type = 'EXPENSE'")
     BigDecimal calculateTotalSpentForCategory(@Param("userId") int userId, @Param("category") String category);
 
+    // ✅ ADD THIS NEW METHOD
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId AND t.category = :category AND t.type = 'EXPENSE' AND t.date BETWEEN :startDate AND :endDate")
+    BigDecimal calculateTotalSpentForCategoryBetweenDates(
+            @Param("userId") int userId,
+            @Param("category") String category,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId AND t.category = :category AND t.type = 'SAVINGS'")
     BigDecimal calculateTotalSavedForCategory(@Param("userId") int userId, @Param("category") String category);
 
@@ -44,4 +52,3 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             LocalDate endDate
     );
 }
-

@@ -1,71 +1,117 @@
-// Located at: frontend-angular/src/app/features/analysis-detail/detail/income-detail/income-detail.scss
-
-// Reusing common styles from the expense detail
-.overall-summary-container, .summary-card, .content-grid, .main-content, .chart-box, .chart-switcher, .details-prompt {
-  // These styles can be copied directly from expense-detail.scss
-  // or you can use a shared SCSS partial for a cleaner approach.
+.income-detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.overall-summary-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+.bento-card, .summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+}
 
-  &.full-width {
-    grid-template-columns: 1fr 1fr;
+.summary-card-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+
+  .summary-card {
+    text-align: center;
+    h4 {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin: 0 0 0.5rem;
+    }
+    p {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin: 0;
+    }
   }
 }
 
-.summary-card {
-  background: white;
-  padding: 1.25rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  h4 { margin: 0 0 0.5rem; font-size: 0.9rem; color: #6c757d; }
-  p { margin: 0; font-size: 1.75rem; font-weight: 600; }
+.chart-section {
+  display: flex;
+  min-height: 400px;
+
+  .main-chart {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .category-details {
+    flex: 1;
+    border-left: 1px solid #e9ecef;
+    padding-left: 1.5rem;
+    margin-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+
+    h4 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #e9ecef;
+      padding-bottom: 0.75rem;
+      font-size: 1.1rem;
+    }
+  }
 }
 
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr; // Simpler grid for income
-  gap: 1.5rem;
+.details-prompt {
+  color: #6c757d;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.main-content {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 1.5rem;
-  background: transparent;
-  padding: 0;
-  box-shadow: none;
-}
+.details-content.active {
+  .category-name {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #28a745;
+    margin-bottom: 1rem;
+  }
 
-.sidebar-content, .chart-box {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
+  .details-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
 
-.details-prompt { color: #6c757d; }
+    .amount {
+      font-weight: 500;
+    }
+  }
+}
 
 .chart-switcher {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 1rem;
   gap: 0.5rem;
+  margin-bottom: 1rem;
+
   button {
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.8rem;
     font-size: 0.8rem;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    background-color: transparent;
     cursor: pointer;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease-in-out;
+
     &.active {
-      background-color: #007bff;
+      background-color: #28a745;
       color: white;
-      border-color: #007bff;
+      border-color: #28a745;
+    }
+
+    &:hover:not(.active) {
+      background-color: #e9ecef;
     }
   }
 }

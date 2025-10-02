@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { AnalysisService, IncomeSummary, CategorySpending } from '../../../../core/services/analysis.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -16,7 +16,9 @@ import { BarChartComponent } from '../../../charts/bar-chart/bar-chart';
   ],
   templateUrl: './income-detail.html',
 })
-export class IncomeDetailComponent implements OnInit {
+export class IncomeDetailComponent implements OnChanges {
+  @Input() selectedMonth!: string;
+
   selectedChartType: 'pie' | 'bar' = 'pie';
   incomeSummary: IncomeSummary | null = null;
   incomeByCategory: CategorySpending[] = [];
@@ -27,8 +29,10 @@ export class IncomeDetailComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  ngOnInit(): void {
-    this.fetchIncomeData();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedMonth'] && this.selectedMonth) {
+      this.fetchIncomeData();
+    }
   }
 
   selectChartType(type: 'pie' | 'bar'): void {
@@ -39,15 +43,19 @@ export class IncomeDetailComponent implements OnInit {
     const userId = this.authService.getUserId();
     if (!userId) return;
 
-    this.analysisService.getIncomeSummary(userId).subscribe(data => this.incomeSummary = data);
-    this.analysisService.getIncomeByCategory(userId).subscribe(data => this.incomeByCategory = data);
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+
+    this.analysisService.getIncomeSummary(userId, year, month).subscribe(data => this.incomeSummary = data);
+    this.analysisService.getIncomeByCategory(userId, year, month).subscribe(data => this.incomeByCategory = data);
   }
 
   onCategorySelected(category: string): void {
     const userId = this.authService.getUserId();
     if (!userId) return;
 
-    this.analysisService.getIncomeSummaryForCategory(userId, category).subscribe(summary => {
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+
+    this.analysisService.getIncomeSummaryForCategory(userId, category, year, month).subscribe(summary => {
       this.selectedIncomeCategorySummary = summary;
     });
   }

@@ -55,14 +55,11 @@
     </div>
   </div>
 
-
   <div class="trend-row">
     <div class="bento-card category-selector">
       <div class="trend-header">
         <h3>Daily Spending by Category</h3>
-        <input type="month" id="month-select" [(ngModel)]="selectedMonth" (change)="updateMonthlyTrendChart()">
       </div>
-
       <div class="category-list">
         @for(category of allCategories; track category) {
           <button

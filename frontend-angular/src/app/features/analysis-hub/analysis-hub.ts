@@ -15,6 +15,7 @@ import { BarChartComponent } from '../charts/bar-chart/bar-chart';
 import { AiSuggestionsCardComponent } from '../charts/ai-suggestions-card/ai-suggestions-card';
 import { AiService } from '../../core/services/ai.service';
 import { finalize } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-analysis-hub',
@@ -28,7 +29,8 @@ import { finalize } from 'rxjs';
     NgApexchartsModule,
     MonthlyHeatmapComponent,
     BarChartComponent,
-    AiSuggestionsCardComponent
+    AiSuggestionsCardComponent,
+    FormsModule
   ],
   templateUrl: './analysis-hub.html',
   styleUrls: ['./analysis-hub.scss']
@@ -37,14 +39,15 @@ export class AnalysisHubComponent implements OnInit {
   trendData: any = {};
   topExpenseCategories: CategorySpending[] = [];
   savingsGoals: SavingGoal[] = [];
-  savingsByCategory: CategorySpending[] = []; // ✅ Add this property
+  savingsByCategory: CategorySpending[] = [];
   heatMapData: any[] = [];
   monthlySummaryPieData: CategorySpending[] = [];
   aiSuggestions: string[] = [];
   aiSuggestionsLoading = false;
 
-  currentYear: number = new Date().getFullYear();
-  currentMonth: number = new Date().getMonth() + 1;
+  currentYear: number;
+  currentMonth: number;
+  selectedMonth: string;
 
   constructor(
     private analysisService: AnalysisService,
@@ -52,12 +55,16 @@ export class AnalysisHubComponent implements OnInit {
     private breadcrumbService: BreadcrumbService,
     private savingGoalService: SavingGoalService,
     private aiService: AiService
-  ) {}
+  ) {
+    const today = new Date();
+    this.currentYear = today.getFullYear();
+    this.currentMonth = today.getMonth() + 1;
+    this.selectedMonth = today.toISOString().substring(0, 7);
+  }
 
   ngOnInit(): void {
     this.initializePage();
   }
-
 
   private initializePage(): void {
     this.setupBreadcrumbs();
@@ -74,6 +81,16 @@ export class AnalysisHubComponent implements OnInit {
     this.loadAiSuggestions(userId);
   }
 
+  onMonthChange(): void {
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+    this.currentYear = year;
+    this.currentMonth = month;
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.loadHeatMapData(userId);
+      this.loadCategoryData(userId);
+    }
+  }
 
   private setupBreadcrumbs(): void {
     setTimeout(() => {
@@ -108,8 +125,7 @@ export class AnalysisHubComponent implements OnInit {
     this.analysisService.getTopExpenseCategories(userId).subscribe(data => {
       this.topExpenseCategories = data;
     });
-    // ✅ Fetch savings by category for the new chart
-    this.analysisService.getSavingsByCategory(userId).subscribe(data => {
+    this.analysisService.getSavingsByCategory(userId, this.currentYear, this.currentMonth).subscribe(data => {
       this.savingsByCategory = data;
     });
   }

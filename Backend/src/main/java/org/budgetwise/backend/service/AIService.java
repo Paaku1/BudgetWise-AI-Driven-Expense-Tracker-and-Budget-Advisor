@@ -32,9 +32,11 @@ public class AIService {
 
 
     public List<String> generateSuggestions(int userId) {
-
-        List<CategorySpendingDTO> topExpenses = analysisService.getExpenseByCategory(userId);
         LocalDate today = LocalDate.now();
+        int year = today.getYear();
+        int month = today.getMonthValue();
+
+        List<CategorySpendingDTO> topExpenses = analysisService.getExpenseByCategory(userId, year, month);
         LocalDate startOfMonth = today.withDayOfMonth(1);
         List<Transaction> monthlyExpenses = transactionRepository.findByUserIdAndTypeAndDateBetween(
                 userId, TransactionType.EXPENSE, startOfMonth, today
@@ -72,9 +74,13 @@ public class AIService {
     }
 
     public String getChatResponse(int userId, String userPrompt) {
-        ExpenseSummaryDTO expenseSummary = analysisService.getExpenseSummary(userId);
-        IncomeSummaryDTO incomeSummary = analysisService.getIncomeSummary(userId);
-        SavingsSummaryDTO savingsSummary = analysisService.getSavingsSummary(userId);
+        LocalDate today = LocalDate.now();
+        int year = today.getYear();
+        int month = today.getMonthValue();
+
+        ExpenseSummaryDTO expenseSummary = analysisService.getExpenseSummary(userId, year, month);
+        IncomeSummaryDTO incomeSummary = analysisService.getIncomeSummary(userId, year, month);
+        SavingsSummaryDTO savingsSummary = analysisService.getSavingsSummary(userId, year, month);
         CashFlowDTO cashFlow = analysisService.getCashFlowSummary(userId);
         List<CategorySpendingDTO> topExpenses = analysisService.getTopExpenseCategories(userId);
 
@@ -128,6 +134,4 @@ public class AIService {
                 .call()
                 .content();
     }
-
-
 }

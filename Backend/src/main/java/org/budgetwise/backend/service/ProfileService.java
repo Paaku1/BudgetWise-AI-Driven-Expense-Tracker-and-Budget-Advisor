@@ -1,17 +1,14 @@
 package org.budgetwise.backend.service;
 
 import org.budgetwise.backend.dto.ProfileDTO;
-import org.budgetwise.backend.dto.TransactionDTO;
 import org.budgetwise.backend.model.Profile;
-import org.budgetwise.backend.model.Transaction;
 import org.budgetwise.backend.model.User;
 import org.budgetwise.backend.repository.ProfileRepository;
 import org.budgetwise.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.time.LocalDate;
 
 @Service
 public class ProfileService {
@@ -45,8 +42,13 @@ public class ProfileService {
 
         ProfileDTO dto = ProfileDTO.fromEntity(profile);
 
+        // ✅ Get current year and month
+        LocalDate today = LocalDate.now();
+        int year = today.getYear();
+        int month = today.getMonthValue();
+
         // ✅ Get the monthly spend and add it to the DTO
-        double totalSpend = analysisService.getExpenseSummary(userId).getTotalSpendThisMonth();
+        double totalSpend = analysisService.getExpenseSummary(userId, year, month).getTotalSpendThisMonth();
         dto.setTotalSpendThisMonth(totalSpend);
 
         return dto;
@@ -66,6 +68,4 @@ public class ProfileService {
         Profile savedProfile = profileRepository.save(existingProfile);
         return ProfileDTO.fromEntity(savedProfile);
     }
-
-
 }

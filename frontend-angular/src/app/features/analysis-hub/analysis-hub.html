@@ -22,6 +22,9 @@
     </div>
 
     <div class="bento-card full-width">
+      <div class="chart-grid-header">
+        <input type="month" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
+      </div>
       <div class="chart-grid">
         <div class="bento-card medium heat-map">
           <app-monthly-heatmap [year]="currentYear" [month]="currentMonth"></app-monthly-heatmap>

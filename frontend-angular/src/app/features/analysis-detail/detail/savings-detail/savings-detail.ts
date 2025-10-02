@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { AnalysisService, SavingsSummary } from '../../../../core/services/analysis.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -16,7 +16,9 @@ import { SavingGoalsComponent } from '../../../saving-goals/saving-goals';
   ],
   templateUrl: './savings-detail.html',
 })
-export class SavingsDetailComponent implements OnInit {
+export class SavingsDetailComponent implements OnChanges {
+  @Input() selectedMonth!: string;
+
   savingsSummary: SavingsSummary | null = null;
   savingGoals: SavingGoal[] = [];
 
@@ -26,15 +28,21 @@ export class SavingsDetailComponent implements OnInit {
     private savingGoalService: SavingGoalService
   ) {}
 
-  ngOnInit(): void {
-    this.fetchSavingsData();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedMonth'] && this.selectedMonth) {
+      this.fetchSavingsData();
+    }
   }
 
   fetchSavingsData(): void {
     const userId = this.authService.getUserId();
     if (!userId) return;
 
-    this.analysisService.getSavingsSummary(userId).subscribe(data => this.savingsSummary = data);
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+
+    this.analysisService.getSavingsSummary(userId, year, month).subscribe(data => this.savingsSummary = data);
+
+    // Saving goals are not dependent on the selected month, so this call is correct as-is.
     this.savingGoalService.getGoals(userId).subscribe(goals => {
       this.savingGoals = goals.sort((a, b) => (a.savedAmount / a.targetAmount) - (b.savedAmount / b.targetAmount));
     });
