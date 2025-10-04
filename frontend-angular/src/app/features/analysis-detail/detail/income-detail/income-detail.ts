@@ -15,6 +15,7 @@ import { BarChartComponent } from '../../../charts/bar-chart/bar-chart';
     BarChartComponent,
   ],
   templateUrl: './income-detail.html',
+  styleUrls:['income-detail.scss']
 })
 export class IncomeDetailComponent implements OnChanges {
   @Input() selectedMonth!: string;

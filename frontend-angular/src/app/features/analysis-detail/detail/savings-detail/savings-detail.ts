@@ -15,6 +15,7 @@ import { SavingGoalsComponent } from '../../../saving-goals/saving-goals';
     SavingGoalsComponent
   ],
   templateUrl: './savings-detail.html',
+  styleUrls: ['savings-detail.scss'],
 })
 export class SavingsDetailComponent implements OnChanges {
   @Input() selectedMonth!: string;
