@@ -71,6 +71,12 @@
   height: 350px;
 }
 
+.chart-grid-header {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .chart-container {
   display: flex;
   flex-direction: column;
@@ -121,4 +127,8 @@
   app-pie-chart, apx-chart, app-bar-chart {
     flex-grow: 1;
   }
+}
+
+.bento-card.ai-suggestions {
+  grid-column: 1 / 2;
 }

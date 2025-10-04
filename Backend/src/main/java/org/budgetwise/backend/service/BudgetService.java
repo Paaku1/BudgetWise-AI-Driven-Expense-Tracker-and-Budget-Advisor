@@ -1,5 +1,6 @@
 package org.budgetwise.backend.service;
 
+import lombok.RequiredArgsConstructor;
 import org.budgetwise.backend.dto.BudgetDTO;
 import org.budgetwise.backend.model.Budget;
 import org.budgetwise.backend.model.User;
@@ -13,35 +14,31 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BudgetService {
 
     private final BudgetRepository budgetRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
 
-    public BudgetService(BudgetRepository budgetRepository, UserRepository userRepository, TransactionRepository transactionRepository) {
-        this.budgetRepository = budgetRepository;
-        this.userRepository = userRepository;
-        this.transactionRepository = transactionRepository;
-    }
-
-    // ✅ Create new budget
-    @Transactional // ✅ Add transactional annotation
+    @Transactional
     public Budget createBudget(int userId, Budget budget) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         budget.setUser(user);
 
-        // ✅ Calculate the initial spent amount from existing transactions
-        BigDecimal totalSpent = transactionRepository.calculateTotalSpentForCategory(userId, budget.getCategory());
+        // ✅ FIX: Calculate initial spent amount using the budget's date range
+        BigDecimal totalSpent = transactionRepository.calculateTotalSpentForCategoryBetweenDates(
+                userId,
+                budget.getCategory(),
+                budget.getStartDate(),
+                budget.getEndDate()
+        );
         budget.setSpentAmount(totalSpent.doubleValue());
 
         return budgetRepository.save(budget);
     }
 
-    // ... rest of the service methods remain the same ...
-
-    // ✅ Update budget
     public Budget updateBudget(int budgetId, Budget updatedBudget) {
         Budget existing = budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new RuntimeException("Budget not found"));
@@ -55,12 +52,10 @@ public class BudgetService {
         return budgetRepository.save(existing);
     }
 
-    // ✅ Delete budget
     public void deleteBudget(int budgetId) {
         budgetRepository.deleteById(budgetId);
     }
 
-    // ✅ Get budgets for a user
     public List<BudgetDTO> getBudgetsByUser(int userId) {
         return budgetRepository.findByUserId(userId)
                 .stream()
@@ -68,8 +63,6 @@ public class BudgetService {
                 .toList();
     }
 
-
-    // ✅ Calculate remaining budget
     public double getRemainingBudget(int budgetId) {
         Budget budget = budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new RuntimeException("Budget not found"));

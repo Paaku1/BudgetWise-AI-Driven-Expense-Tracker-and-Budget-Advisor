@@ -1,5 +1,14 @@
 // This can be at the top level of your app.scss file
 
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  // You can define your font-family here
+}
+
 .animation-wrapper {
   position: fixed;
   top: 0;

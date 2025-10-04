@@ -17,7 +17,8 @@ export class SavingGoalsComponent implements OnInit {
   // ✅ Add EventEmitters
   @Output() goalUpdated = new EventEmitter<void>();
   @Output() goalDeleted = new EventEmitter<void>();
-  @Output() addTransactionForCategory = new EventEmitter<string>();
+  @Output() addTransactionForCategory = new EventEmitter<{ category: string, type: 'SAVINGS' }>();
+
   @Input() goals: SavingGoal[] = []; // ✅ Fix for the NG8002 error
   @Input() showActions: boolean = true;
 
@@ -38,7 +39,7 @@ export class SavingGoalsComponent implements OnInit {
   }
 
   onAddTransaction(category: string): void {
-    this.addTransactionForCategory.emit(category);
+    this.addTransactionForCategory.emit({ category, type: 'SAVINGS' });
   }
 
   fetchGoals(): void {

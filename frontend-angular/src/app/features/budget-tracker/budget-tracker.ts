@@ -14,7 +14,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './budget-tracker.scss'
 })
 export class BudgetTrackerComponent implements OnInit {
-  @Output() addTransactionForCategory = new EventEmitter<string>();
+  @Output() addTransactionForCategory = new EventEmitter<{ category: string, type: 'EXPENSE' }>();
+
   @Output() budgetUpdated = new EventEmitter<void>();
   @Output() budgetDeleted = new EventEmitter<void>();
 
@@ -53,7 +54,7 @@ export class BudgetTrackerComponent implements OnInit {
   }
 
   onAddTransaction(category: string): void {
-    this.addTransactionForCategory.emit(category);
+    this.addTransactionForCategory.emit({ category, type: 'EXPENSE' });
   }
 
   handleEdit(budget: Budget): void {

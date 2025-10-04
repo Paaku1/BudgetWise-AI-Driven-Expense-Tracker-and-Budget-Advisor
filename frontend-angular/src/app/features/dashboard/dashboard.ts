@@ -41,6 +41,7 @@ export class DashboardComponent implements OnInit {
   isFormVisible = false;
   transactions: Transaction[] = [];
   prefilledCategory: string | null = null;
+  prefilledType: 'EXPENSE' | 'INCOME' | 'SAVINGS' | null = null;
 
   constructor(
     private authService: AuthService,
@@ -95,11 +96,13 @@ export class DashboardComponent implements OnInit {
   onAddTransaction(): void {
     this.isFormVisible = true;
     this.prefilledCategory = null;
+    this.prefilledType = null;
   }
 
-  onAddTransactionForCategory(category: string): void {
+  onAddTransactionForCategory(data: { category: string, type: 'EXPENSE' | 'SAVINGS' }): void {
     this.isFormVisible = true;
-    this.prefilledCategory = category;
+    this.prefilledCategory = data.category;
+    this.prefilledType = data.type; // ✅ Set type
   }
 
   // This is called when the transaction form emits an event.
