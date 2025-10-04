@@ -26,12 +26,12 @@ public class AnalysisService {
     private final SavingGoalRepository savingGoalRepository;
     private final ProfileRepository profileRepository;
 
-    public ExpenseSummaryDTO getExpenseSummary(int userId) {
-        LocalDate today = getLocalDate();
-        LocalDate startOfMonth = today.withDayOfMonth(1);
+    public ExpenseSummaryDTO getExpenseSummary(int userId, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
         List<Transaction> monthlyExpenses = transactionRepository.findByUserIdAndTypeAndDateBetween(
-                userId, TransactionType.EXPENSE, startOfMonth, today
+                userId, TransactionType.EXPENSE, startOfMonth, endOfMonth
         );
 
         double totalSpend = monthlyExpenses.stream()
@@ -39,7 +39,7 @@ public class AnalysisService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .doubleValue();
 
-        double averageDailySpend = totalSpend / today.getDayOfMonth();
+        double averageDailySpend = totalSpend / endOfMonth.getDayOfMonth();
 
         String highestSpendingCategory = monthlyExpenses.stream()
                 .collect(Collectors.groupingBy(
@@ -54,11 +54,11 @@ public class AnalysisService {
         return new ExpenseSummaryDTO(totalSpend, averageDailySpend, highestSpendingCategory);
     }
 
-    public List<CategorySpendingDTO> getExpenseByCategory(int userId) {
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = today.withDayOfMonth(1);
+    public List<CategorySpendingDTO> getExpenseByCategory(int userId, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
         List<Transaction> monthlyExpenses = transactionRepository.findByUserIdAndTypeAndDateBetween(
-                userId, TransactionType.EXPENSE, startOfMonth, today);
+                userId, TransactionType.EXPENSE, startOfMonth, endOfMonth);
 
         return monthlyExpenses.stream()
                 .collect(Collectors.groupingBy(
@@ -70,34 +70,32 @@ public class AnalysisService {
                 .collect(Collectors.toList());
     }
 
-    public ExpenseSummaryDTO getExpenseSummaryForCategory(int userId, String category) {
-        LocalDate today = getLocalDate();
-        LocalDate startOfMonth = today.withDayOfMonth(1);
+    public ExpenseSummaryDTO getExpenseSummaryForCategory(int userId, String category, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
         List<Transaction> monthlyExpensesForCategory = transactionRepository
-                .findByUserIdAndTypeAndCategoryAndDateBetween(userId, TransactionType.EXPENSE, category, startOfMonth, today);
+                .findByUserIdAndTypeAndCategoryAndDateBetween(userId, TransactionType.EXPENSE, category, startOfMonth, endOfMonth);
 
         double totalSpend = monthlyExpensesForCategory.stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .doubleValue();
 
-
         long transactionCount = monthlyExpensesForCategory.size();
         double averageTransactionAmount = (transactionCount > 0)
                 ? BigDecimal.valueOf(totalSpend / transactionCount).setScale(2, RoundingMode.HALF_UP).doubleValue()
                 : 0;
 
-
         return new ExpenseSummaryDTO(totalSpend, averageTransactionAmount, category);
     }
 
-    public IncomeSummaryDTO getIncomeSummary(int userId) {
-        LocalDate today = getLocalDate();
-        LocalDate startOfMonth = today.withDayOfMonth(1);
+    public IncomeSummaryDTO getIncomeSummary(int userId, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
         List<Transaction> monthlyIncome = transactionRepository.findByUserIdAndTypeAndDateBetween(
-                userId, TransactionType.INCOME, startOfMonth, today
+                userId, TransactionType.INCOME, startOfMonth, endOfMonth
         );
 
         double totalIncome = monthlyIncome.stream()
@@ -118,15 +116,11 @@ public class AnalysisService {
         return new IncomeSummaryDTO(totalIncome, highestIncomeCategory);
     }
 
-    private LocalDate getLocalDate() {
-        return LocalDate.now();
-    }
-
-    public List<CategorySpendingDTO> getIncomeByCategory(int userId) {
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = today.withDayOfMonth(1);
+    public List<CategorySpendingDTO> getIncomeByCategory(int userId, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
         List<Transaction> monthlyIncome = transactionRepository.findByUserIdAndTypeAndDateBetween(
-                userId, TransactionType.INCOME, startOfMonth, today);
+                userId, TransactionType.INCOME, startOfMonth, endOfMonth);
 
         return monthlyIncome.stream()
                 .collect(Collectors.groupingBy(
@@ -138,15 +132,15 @@ public class AnalysisService {
                 .collect(Collectors.toList());
     }
 
-    public SavingsSummaryDTO getSavingsSummary(int userId) {
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = today.withDayOfMonth(1);
+    public SavingsSummaryDTO getSavingsSummary(int userId, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
-        List<Transaction> monthlyIncome = transactionRepository.findByUserIdAndTypeAndDateBetween(
-                userId, TransactionType.INCOME, startOfMonth, today
+        List<Transaction> monthlySavings = transactionRepository.findByUserIdAndTypeAndDateBetween(
+                userId, TransactionType.SAVINGS, startOfMonth, endOfMonth
         );
 
-        double totalSaved = monthlyIncome.stream()
+        double totalSaved = monthlySavings.stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .doubleValue();
@@ -158,19 +152,18 @@ public class AnalysisService {
         return new SavingsSummaryDTO(totalSaved, goalsMet, goalsInProgress);
     }
 
-    public IncomeSummaryDTO getIncomeSummaryForCategory(int userId, String category) {
-        LocalDate today = getLocalDate();
-        LocalDate startOfMonth = today.withDayOfMonth(1);
+    public IncomeSummaryDTO getIncomeSummaryForCategory(int userId, String category, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
         List<Transaction> monthlyIncomeForCategory = transactionRepository.findByUserIdAndTypeAndCategoryAndDateBetween(
-                userId, TransactionType.INCOME, category, startOfMonth, today
+                userId, TransactionType.INCOME, category, startOfMonth, endOfMonth
         );
 
         double totalIncome = monthlyIncomeForCategory.stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .doubleValue();
-
 
         return new IncomeSummaryDTO(totalIncome, category);
     }
@@ -253,9 +246,19 @@ public class AnalysisService {
                 .collect(Collectors.toList());
     }
 
-    public List<CategorySpendingDTO> getSavingsByCategory(int userId) {
-        return savingGoalRepository.findByUserId(userId).stream()
-                .map(goal -> new CategorySpendingDTO(goal.getCategory(), goal.getSavedAmount()))
+    public List<CategorySpendingDTO> getSavingsByCategory(int userId, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+
+        List<Transaction> savingsTransactions = transactionRepository.findByUserIdAndTypeAndDateBetween(userId, TransactionType.SAVINGS, startOfMonth, endOfMonth);
+
+        return savingsTransactions.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::getCategory,
+                        Collectors.summingDouble(t -> t.getAmount().doubleValue())
+                ))
+                .entrySet().stream()
+                .map(entry -> new CategorySpendingDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
@@ -274,7 +277,6 @@ public class AnalysisService {
                 ));
     }
 
-    // Add this method to your AnalysisService.java
     public MultiDataSetTrendDTO getDailyExpenseTrendForCategories(int userId, int year, int month, List<String> categories) {
         LocalDate startOfMonth = LocalDate.of(year, month, 1);
         LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
@@ -283,7 +285,6 @@ public class AnalysisService {
                 userId, TransactionType.EXPENSE, categories, startOfMonth, endOfMonth
         );
 
-        // Group transactions by category, then by day
         Map<String, Map<LocalDate, Double>> expensesByCategoryAndDay = transactions.stream()
                 .collect(Collectors.groupingBy(
                         Transaction::getCategory,
@@ -310,18 +311,18 @@ public class AnalysisService {
         return new MultiDataSetTrendDTO(labels, datasets);
     }
 
-    // Add this new method inside your AnalysisService.java file
-
     public MonthlySummaryDTO getMonthlySummary(int userId) {
-        // Reuse existing methods to gather the data
-        IncomeSummaryDTO incomeSummary = getIncomeSummary(userId);
-        ExpenseSummaryDTO expenseSummary = getExpenseSummary(userId);
+        LocalDate today = LocalDate.now();
+        int year = today.getYear();
+        int month = today.getMonthValue();
+
+        IncomeSummaryDTO incomeSummary = getIncomeSummary(userId, year, month);
+        ExpenseSummaryDTO expenseSummary = getExpenseSummary(userId, year, month);
         List<CategorySpendingDTO> topCategories = getTopExpenseCategories(userId);
         TrendDataDTO trend = getIncomeVsExpenseTrend(userId);
 
         double netSavings = incomeSummary.getTotalIncomeThisMonth() - expenseSummary.getTotalSpendThisMonth();
 
-        // Build and return the complete summary DTO
         return MonthlySummaryDTO.builder()
                 .totalIncome(incomeSummary.getTotalIncomeThisMonth())
                 .totalExpenses(expenseSummary.getTotalSpendThisMonth())
@@ -330,6 +331,4 @@ public class AnalysisService {
                 .incomeVsExpenseTrend(trend)
                 .build();
     }
-
-
 }

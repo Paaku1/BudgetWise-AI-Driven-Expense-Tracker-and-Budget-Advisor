@@ -12,6 +12,7 @@
     </div>
   }
   @if (savingGoals.length === 0) {
+    <p class="empty-state">No savings found. Set a goal today!</p>
   } @else {
     @for (goal of savingGoals; track goal.id) {
       <div class="goal-card">

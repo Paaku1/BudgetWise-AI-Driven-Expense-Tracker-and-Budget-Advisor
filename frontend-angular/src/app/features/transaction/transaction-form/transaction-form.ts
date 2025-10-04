@@ -17,24 +17,23 @@ import { Transaction } from '../../../shared/models/transaction';
   providedIn: 'root'
 })
 export class TransactionFormComponent implements OnInit {
-  // ✅ Emits the newly added transaction to the parent component
   @Output() transactionAdded = new EventEmitter<Transaction>();
-  @Output() closeForm = new EventEmitter<void>(); // ✅ New output to close the form
-  @Input() prefilledCategory: string | null = null; // New Input to receive a pre-filled category
+  @Output() closeForm = new EventEmitter<void>();
+  @Input() prefilledCategory: string | null = null;
+  @Input() prefilledType: 'EXPENSE' | 'INCOME' | 'SAVINGS' | null = null; // ✅ Allow pre-filling type
 
-  // ✅ Properties for the new category logic
   categories: string[] = [];
   isNewCategory: boolean  = false;
 
-  transaction: Transaction = {
-    id: 0,
-    amount: 0,
+  transaction: Partial<Transaction> = {
+    amount: undefined,
     type: 'EXPENSE',
     category: '',
     description: '',
     date: new Date()
   };
-  transactionTypes = ['EXPENSE', 'INCOME']; // Removed 'SAVINGS' as it's typically a separate account, not a transaction type
+  // ✅ Add SAVINGS to the list of types
+  transactionTypes = ['EXPENSE', 'INCOME', 'SAVINGS'];
 
   constructor(
     private transactionService: TransactionService,
@@ -42,9 +41,6 @@ export class TransactionFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const userId = this.authService.getUserId();
-
-    // ✅ Fetch categories from the backend
     this.transactionService.getCategories().subscribe({
       next: (data) => {
         this.categories = data;
@@ -52,18 +48,19 @@ export class TransactionFormComponent implements OnInit {
         if (this.prefilledCategory) {
           this.transaction.category = this.prefilledCategory;
         }
-      },
-      error: (err) => {
-        console.error('Error fetching categories:', err);
+        // ✅ Prefill type if provided
+        if (this.prefilledType) {
+          this.transaction.type = this.prefilledType;
+        }
       }
     });
   }
-  // ✅ New method to handle the category change
+
   onCategoryChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     if (selectElement.value === 'new') {
       this.isNewCategory = true;
-      this.transaction.category = ''; // Clear the category value
+      this.transaction.category = '';
     } else {
       this.isNewCategory = false;
     }
@@ -71,17 +68,12 @@ export class TransactionFormComponent implements OnInit {
 
   onSubmit(): void {
     const userId = this.authService.getUserId();
-
     if (userId) {
-      this.transactionService.addTransaction(userId, this.transaction).subscribe({
+      this.transactionService.addTransaction(userId, this.transaction as Transaction).subscribe({
         next: (response) => {
           alert('Transaction added successfully!');
           this.transactionAdded.emit(response);
-          this.closeForm.emit(); // ✅ Emit the close event
-        },
-        error: (err) => {
-          console.error('Error adding transaction:', err);
-          alert('Failed to add transaction. Please try again.');
+          this.closeForm.emit();
         }
       });
     }

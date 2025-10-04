@@ -45,32 +45,39 @@ export class AnalysisService {
 
   constructor(private http: HttpClient) { }
 
-  getExpenseSummary(userId: number): Observable<ExpenseSummary> {
-    return this.http.get<ExpenseSummary>(`${this.apiUrl}/expense-summary/${userId}`);
+  getExpenseSummary(userId: number, year: number, month: number): Observable<ExpenseSummary> {
+    const params = { year: year.toString(), month: month.toString() };
+    return this.http.get<ExpenseSummary>(`${this.apiUrl}/expense-summary/${userId}`, { params });
   }
 
-  getExpenseByCategory(userId: number): Observable<CategorySpending[]> {
-    return this.http.get<CategorySpending[]>(`${this.apiUrl}/expense-by-category/${userId}`);
+  getExpenseByCategory(userId: number, year: number, month: number): Observable<CategorySpending[]> {
+    const params = { year: year.toString(), month: month.toString() };
+    return this.http.get<CategorySpending[]>(`${this.apiUrl}/expense-by-category/${userId}`, { params });
   }
 
-  getExpenseSummaryForCategory(userId: number, category: string): Observable<ExpenseSummary> {
-    return this.http.get<ExpenseSummary>(`${this.apiUrl}/expense-summary-by-category/${userId}`, { params: { category } });
+  getExpenseSummaryForCategory(userId: number, category: string, year: number, month: number): Observable<ExpenseSummary> {
+    const params = { category, year: year.toString(), month: month.toString() };
+    return this.http.get<ExpenseSummary>(`${this.apiUrl}/expense-summary-by-category/${userId}`, { params });
   }
 
-  getIncomeSummary(userId: number): Observable<IncomeSummary> {
-    return this.http.get<IncomeSummary>(`${this.apiUrl}/income-summary/${userId}`);
+  getIncomeSummary(userId: number, year: number, month: number): Observable<IncomeSummary> {
+    const params = { year: year.toString(), month: month.toString() };
+    return this.http.get<IncomeSummary>(`${this.apiUrl}/income-summary/${userId}`, { params });
   }
 
-  getIncomeByCategory(userId: number): Observable<CategorySpending[]> {
-    return this.http.get<CategorySpending[]>(`${this.apiUrl}/income-by-category/${userId}`);
+  getIncomeByCategory(userId: number, year: number, month: number): Observable<CategorySpending[]> {
+    const params = { year: year.toString(), month: month.toString() };
+    return this.http.get<CategorySpending[]>(`${this.apiUrl}/income-by-category/${userId}`, { params });
   }
 
-  getSavingsSummary(userId: number): Observable<SavingsSummary> {
-    return this.http.get<SavingsSummary>(`${this.apiUrl}/savings-summary/${userId}`);
+  getSavingsSummary(userId: number, year: number, month: number): Observable<SavingsSummary> {
+    const params = { year: year.toString(), month: month.toString() };
+    return this.http.get<SavingsSummary>(`${this.apiUrl}/savings-summary/${userId}`, { params });
   }
 
-  getIncomeSummaryForCategory(userId: number, category: string): Observable<IncomeSummary> {
-    return this.http.get<IncomeSummary>(`${this.apiUrl}/income-summary-by-category/${userId}`, { params: { category } });
+  getIncomeSummaryForCategory(userId: number, category: string, year: number, month: number): Observable<IncomeSummary> {
+    const params = { category, year: year.toString(), month: month.toString() };
+    return this.http.get<IncomeSummary>(`${this.apiUrl}/income-summary-by-category/${userId}`, { params });
   }
 
   getCashFlowSummary(userId: number): Observable<CashFlowSummary> {
@@ -79,18 +86,6 @@ export class AnalysisService {
 
   getIncomeVsExpenseTrend(userId: number): Observable<TrendData> {
     return this.http.get<TrendData>(`${this.apiUrl}/income-expense-trend/${userId}`);
-  }
-
-  getTopExpenseCategories(userId: number): Observable<CategorySpending[]> {
-    return this.http.get<CategorySpending[]>(`${this.apiUrl}/top-expense-categories/${userId}`);
-  }
-
-  getSavingsByCategory(userId: number): Observable<CategorySpending[]> {
-    return this.http.get<CategorySpending[]>(`${this.apiUrl}/savings-by-category/${userId}`);
-  }
-
-  getExpenseHeatMapData(userId: number, year: number, month: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/expense-heatmap/${userId}`, { params: { year, month } });
   }
 
   getMonthlySummary(userId: number): Observable<{income: number, expense: number}> {
@@ -108,5 +103,17 @@ export class AnalysisService {
     });
 
     return this.http.get(`${this.apiUrl}/daily-expense-trend/${userId}`, { params });
+  }
+
+  getTopExpenseCategories(userId: number): Observable<CategorySpending[]> {
+    return this.http.get<CategorySpending[]>(`${this.apiUrl}/top-expense-categories/${userId}`);
+  }
+
+  getSavingsByCategory(userId: number, year: number, month: number): Observable<CategorySpending[]> {
+    return this.http.get<CategorySpending[]>(`${this.apiUrl}/savings-by-category/${userId}`, { params: { year: year.toString(), month: month.toString() } });
+  }
+
+  getExpenseHeatMapData(userId: number, year: number, month: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/expense-heatmap/${userId}`, { params: { year, month } });
   }
 }

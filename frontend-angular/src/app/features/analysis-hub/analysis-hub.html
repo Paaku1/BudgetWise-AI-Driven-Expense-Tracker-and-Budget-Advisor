@@ -18,16 +18,24 @@
     </div>
 
     <div class="bento-card full-width">
+      <app-ai-suggestions-card [suggestions]="aiSuggestions" [loading]="aiSuggestionsLoading"></app-ai-suggestions-card>
+    </div>
+
+    <div class="bento-card full-width">
+      <div class="chart-grid-header">
+        <input type="month" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
+      </div>
       <div class="chart-grid">
         <div class="bento-card medium heat-map">
           <app-monthly-heatmap [year]="currentYear" [month]="currentMonth"></app-monthly-heatmap>
         </div>
         <div class="chart-container">
-          <h4>Monthly Income by Category</h4>
-          <app-bar-chart [data]="incomeByCategory" [label]="'Income'"></app-bar-chart>
+          <h4>Monthly Savings by Category</h4>
+          <app-bar-chart [data]="savingsByCategory" [label]="'Savings'"></app-bar-chart>
         </div>
       </div>
     </div>
+
     <a routerLink="/analysis/details/expenses" class="bento-card nav-card">
       <h3>Explore Expenses</h3>
       <span>View Details &rarr;</span>
@@ -40,7 +48,6 @@
       <h3>Explore Savings</h3>
       <span>View Details &rarr;</span>
     </a>
-
 
   </div>
 </div>

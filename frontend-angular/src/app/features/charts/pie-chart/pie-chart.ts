@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartOptions, ChartType, ChartEvent, ActiveElement } from 'chart.js';
+import { ChartOptions, ChartType } from 'chart.js';
 import { CategorySpending } from '../../../core/services/analysis.service';
 
 @Component({
@@ -11,10 +11,10 @@ import { CategorySpending } from '../../../core/services/analysis.service';
   template: `
     <div class="chart-container">
       <canvas baseChart
-        [data]="pieChartData"
-        [type]="'pie'"
-        [options]="pieChartOptions"
-        (chartClick)="chartClicked($event)">
+              [data]="pieChartData"
+              [type]="pieChartType"
+              [options]="pieChartOptions"
+              (chartClick)="chartClicked($event)">
       </canvas>
     </div>
   `
@@ -23,6 +23,8 @@ export class PieChartComponent implements OnChanges {
   @Input() data: CategorySpending[] = [];
   @Input() type: ChartType = 'pie';
   @Output() categoryClicked = new EventEmitter<string>();
+
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public pieChartOptions: ChartOptions = { responsive: true, maintainAspectRatio: false };
   public pieChartData: { labels: string[], datasets: { data: number[] }[] } = {
@@ -33,6 +35,7 @@ export class PieChartComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.pieChartType = this.type;
+
     if (this.data && this.data.length > 0) {
       this.pieChartData = {
         labels: this.data.map(item => item.category),
@@ -40,7 +43,16 @@ export class PieChartComponent implements OnChanges {
           data: this.data.map(item => item.totalAmount)
         }]
       };
+    } else {
+      // If data is empty or null, clear the chart data
+      this.pieChartData = {
+        labels: [],
+        datasets: [{ data: [] }]
+      };
     }
+
+    // Force the chart to redraw with the new (or empty) data
+    this.chart?.update();
   }
 
   public chartClicked(event: any): void {

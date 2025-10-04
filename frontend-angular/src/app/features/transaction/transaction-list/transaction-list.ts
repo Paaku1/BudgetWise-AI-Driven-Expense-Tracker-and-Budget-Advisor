@@ -28,7 +28,6 @@ export class TransactionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.username = this.authService.getUsername() || 'User';
-    // The initial fetch is now handled by the dashboard
   }
 
   handleEdit(transaction: Transaction): void {

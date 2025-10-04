@@ -48,25 +48,23 @@
   }
 
   <div class="dashboard-bottom-sections">
-    <div class="section-half">
-      <app-budget-tracker
-        #budgetTracker
-        (budgetDeleted)="refreshAllData()"
-        (budgetUpdated)="refreshAllData()"
-        (addTransactionForCategory)="onAddTransactionForCategory($event)"
-      >
-      </app-budget-tracker>
-    </div>
-    <div class="section-half">
-      <app-saving-goals
-        #savingGoalsTracker
-        (goalUpdated)="refreshAllData()"
-        (goalDeleted)="refreshAllData()"
-        (addTransactionForCategory)="onAddTransactionForCategory($event)"
-      >
-      </app-saving-goals>
-    </div>
+  <div class="section-half">
+    <app-budget-tracker
+      #budgetTracker
+      (budgetDeleted)="refreshAllData()"
+      (budgetUpdated)="refreshAllData()"
+      (addTransactionForCategory)="onAddTransactionForCategory($event)">
+    </app-budget-tracker>
   </div>
+  <div class="section-half">
+    <app-saving-goals
+      #savingGoalsTracker
+      (goalUpdated)="refreshAllData()"
+      (goalDeleted)="refreshAllData()"
+      (addTransactionForCategory)="onAddTransactionForCategory($event)">
+    </app-saving-goals>
+  </div>
+</div>
 
   @if (isFormVisible) {
     <div class="modal">
@@ -74,9 +72,8 @@
         <span class="close" (click)="isFormVisible = false">&times;</span>
         <app-transaction-form
           [prefilledCategory]="prefilledCategory"
-          (transactionAdded)="onTransactionAdded($event)"
-          (closeForm)="isFormVisible = false"
-        >
+          [prefilledType]="prefilledType" (transactionAdded)="onTransactionAdded($event)"
+          (closeForm)="isFormVisible = false">
         </app-transaction-form>
       </div>
     </div>

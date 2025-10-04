@@ -19,6 +19,11 @@ export class TransactionService {
     return this.http.post(`${this.url}/${userId}`, transaction);
   }
 
+  // ✅ NEW Method for importing
+  importTransactions(userId: number, transactions: Transaction[]): Observable<any> {
+    return this.http.post(`${this.url}/import/${userId}`, transactions);
+  }
+
   getTransactions(userId: number): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.url}/${userId}`);
   }

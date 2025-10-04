@@ -12,6 +12,10 @@ import { SavingGoalService } from '../../core/services/saving-goal.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { MonthlyHeatmapComponent } from '../charts/monthly-heatmap/monthly-heatmap';
 import { BarChartComponent } from '../charts/bar-chart/bar-chart';
+import { AiSuggestionsCardComponent } from '../charts/ai-suggestions-card/ai-suggestions-card';
+import { AiService } from '../../core/services/ai.service';
+import { finalize } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-analysis-hub',
@@ -24,7 +28,9 @@ import { BarChartComponent } from '../charts/bar-chart/bar-chart';
     SavingsOverviewComponent,
     NgApexchartsModule,
     MonthlyHeatmapComponent,
-    BarChartComponent
+    BarChartComponent,
+    AiSuggestionsCardComponent,
+    FormsModule
   ],
   templateUrl: './analysis-hub.html',
   styleUrls: ['./analysis-hub.scss']
@@ -33,25 +39,32 @@ export class AnalysisHubComponent implements OnInit {
   trendData: any = {};
   topExpenseCategories: CategorySpending[] = [];
   savingsGoals: SavingGoal[] = [];
-  expenseByCategory: CategorySpending[] = [];
-  incomeByCategory: CategorySpending[] = [];
+  savingsByCategory: CategorySpending[] = [];
   heatMapData: any[] = [];
   monthlySummaryPieData: CategorySpending[] = [];
+  aiSuggestions: string[] = [];
+  aiSuggestionsLoading = false;
 
-  currentYear: number = 2025;
-  currentMonth: number = 9;
+  currentYear: number;
+  currentMonth: number;
+  selectedMonth: string;
 
   constructor(
     private analysisService: AnalysisService,
     private authService: AuthService,
     private breadcrumbService: BreadcrumbService,
-    private savingGoalService: SavingGoalService
-  ) {}
+    private savingGoalService: SavingGoalService,
+    private aiService: AiService
+  ) {
+    const today = new Date();
+    this.currentYear = today.getFullYear();
+    this.currentMonth = today.getMonth() + 1;
+    this.selectedMonth = today.toISOString().substring(0, 7);
+  }
 
   ngOnInit(): void {
     this.initializePage();
   }
-
 
   private initializePage(): void {
     this.setupBreadcrumbs();
@@ -65,9 +78,19 @@ export class AnalysisHubComponent implements OnInit {
     this.loadCategoryData(userId);
     this.loadSavingsGoals(userId);
     this.loadHeatMapData(userId);
-    this.loadMonthlySummaryPie(userId);
+    this.loadAiSuggestions(userId);
   }
 
+  onMonthChange(): void {
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+    this.currentYear = year;
+    this.currentMonth = month;
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.loadHeatMapData(userId);
+      this.loadCategoryData(userId);
+    }
+  }
 
   private setupBreadcrumbs(): void {
     setTimeout(() => {
@@ -80,19 +103,17 @@ export class AnalysisHubComponent implements OnInit {
 
   private loadTrendData(userId: number): void {
     this.analysisService.getIncomeVsExpenseTrend(userId).subscribe(apiData => {
-      // The API returns two separate arrays in apiData.data
-      // We need to transform it into the format the chart expects.
       if (apiData) {
         this.trendData = {
           labels: apiData.labels,
           datasets: [
             {
               label: 'Income',
-              data: apiData.incomeData, // First array is Income
+              data: apiData.incomeData,
             },
             {
               label: 'Expense',
-              data: apiData.expenseData, // Second array is Expense
+              data: apiData.expenseData,
             }
           ]
         };
@@ -104,11 +125,8 @@ export class AnalysisHubComponent implements OnInit {
     this.analysisService.getTopExpenseCategories(userId).subscribe(data => {
       this.topExpenseCategories = data;
     });
-    this.analysisService.getExpenseByCategory(userId).subscribe(data => {
-      this.expenseByCategory = data;
-    });
-    this.analysisService.getIncomeByCategory(userId).subscribe(data => {
-      this.incomeByCategory = data;
+    this.analysisService.getSavingsByCategory(userId, this.currentYear, this.currentMonth).subscribe(data => {
+      this.savingsByCategory = data;
     });
   }
 
@@ -119,23 +137,20 @@ export class AnalysisHubComponent implements OnInit {
   }
 
   private loadHeatMapData(userId: number): void {
-    const today = new Date();
-    this.currentYear = today.getFullYear();
-    this.currentMonth = today.getMonth() + 1;
-
     this.analysisService.getExpenseHeatMapData(userId, this.currentYear, this.currentMonth)
       .subscribe(data => {
-        // Convert the map to an array for the component input
         this.heatMapData = Object.entries(data).map(([date, value]) => ({ date, value: value as number }));
       });
   }
 
-  private loadMonthlySummaryPie(userId: number): void {
-    this.analysisService.getMonthlySummary(userId).subscribe(summary => {
-      this.monthlySummaryPieData = [
-        { category: 'Income', totalAmount: summary.income },
-        { category: 'Expense', totalAmount: summary.expense }
-      ];
-    });
+  private loadAiSuggestions(userId: number): void {
+    this.aiSuggestionsLoading = true;
+    this.aiService.getSuggestions(userId)
+      .pipe(
+        finalize(() => this.aiSuggestionsLoading = false)
+      )
+      .subscribe(data => {
+        this.aiSuggestions = data;
+      });
   }
 }

@@ -10,6 +10,8 @@ import {authGuard} from './core/guards/auth-guard';
 import {AnalysisPageComponent} from './features/analysis-detail/analysis-detail';
 import {TransactionsPageComponent} from './features/transaction/transactions-page/transactions-page';
 import {AnalysisHubComponent} from './features/analysis-hub/analysis-hub';
+import {ForumPageComponent} from './features/forum/forum-page/forum-page';
+import {PostDetailComponent} from './features/forum/post-detail/post-detail';
 
 export const routes: Routes = [
 
@@ -22,6 +24,7 @@ export const routes: Routes = [
   { path: 'analysis/details/:type', component: AnalysisPageComponent, canActivate: [authGuard] },
   { path: 'analysis', component: AnalysisHubComponent },
   { path: 'transactions', component: TransactionsPageComponent, canActivate: [authGuard] },
-
+  { path: 'forum', component: ForumPageComponent, canActivate: [authGuard] },
+  { path: 'forum/:postId', component: PostDetailComponent, canActivate: [authGuard] },
 
 ];
