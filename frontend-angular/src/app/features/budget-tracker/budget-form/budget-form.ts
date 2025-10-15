@@ -26,6 +26,7 @@ export class BudgetFormComponent implements OnInit {
 
   categories: string[] = [];
   isNewCategory: boolean = false;
+  errorMessage: string = '';
 
   constructor(
     private budgetService: BudgetService,
@@ -55,19 +56,51 @@ export class BudgetFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Validate form data
+    if (!this.validateBudgetData()) {
+      return;
+    }
+
     const userId = this.authService.getUserId();
     if (userId) {
       this.budgetService.createBudget(userId, this.budget as Budget).subscribe({
         next: (newBudget) => {
+          this.errorMessage = '';
           alert('Budget added successfully!');
           this.budgetAdded.emit(newBudget);
           this.closeForm.emit();
         },
         error: (err) => {
           console.error('Error adding budget:', err);
-          alert('Failed to add budget. Please try again.');
+          this.errorMessage = 'Failed to add budget. Please try again.';
         }
       });
     }
+  }
+
+  private validateBudgetData(): boolean {
+    this.errorMessage = '';
+
+    if (!this.budget.category?.trim()) {
+      this.errorMessage = 'Category is required';
+      return false;
+    }
+    if (!this.budget.limitAmount || this.budget.limitAmount <= 0) {
+      this.errorMessage = 'Limit amount must be greater than 0';
+      return false;
+    }
+    if (!this.budget.startDate) {
+      this.errorMessage = 'Start date is required';
+      return false;
+    }
+    if (!this.budget.endDate) {
+      this.errorMessage = 'End date is required';
+      return false;
+    }
+    if (new Date(this.budget.endDate) < new Date(this.budget.startDate)) {
+      this.errorMessage = 'End date must be after start date';
+      return false;
+    }
+    return true;
   }
 }

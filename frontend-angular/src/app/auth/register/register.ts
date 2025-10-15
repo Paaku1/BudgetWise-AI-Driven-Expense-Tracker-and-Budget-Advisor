@@ -24,8 +24,36 @@ export class RegisterComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  private validateUserData(): boolean {
+    if (!this.firstName?.trim()) {
+      this.error = 'First name is required';
+      return false;
+    }
+    if (!this.lastName?.trim()) {
+      this.error = 'Last name is required';
+      return false;
+    }
+    if (!this.username?.trim()) {
+      this.error = 'Username is required';
+      return false;
+    }
+    if (!this.password?.trim()) {
+      this.error = 'Password is required';
+      return false;
+    }
+    if (!/^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/.test(this.password)) {
+      this.error = 'Password must contain at least 8 characters including 1 uppercase letter and 1 special character';
+      return false;
+    }
+    return true;
+  }
+
   onSubmit(): void {
     this.error = ''; // Reset error message on new submission
+
+    if (!this.validateUserData()) {
+      return;
+    }
 
     // ✅ Add validation check
     if (this.password !== this.confirmPassword) {

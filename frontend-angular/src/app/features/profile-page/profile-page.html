@@ -1,3 +1,10 @@
+<app-alert
+  *ngIf="showAlert"
+  [message]="alertMessage"
+  [type]="alertType"
+  (close)="showAlert = false"
+></app-alert>
+
 <div class="profile-container">
   <h1>Your Profile</h1>
 

@@ -1,4 +1,12 @@
+
+
 <div class="transactions-container">
+  <app-alert
+    *ngIf="showAlert"
+    [message]="alertMessage"
+    [type]="alertType"
+    (close)="showAlert = false"
+  ></app-alert>
 
 
   <div class="transactions-content">

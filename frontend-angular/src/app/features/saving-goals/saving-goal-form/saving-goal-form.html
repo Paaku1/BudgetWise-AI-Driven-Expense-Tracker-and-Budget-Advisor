@@ -1,6 +1,12 @@
 <div class="form-container">
   <h3>Add New Saving Goal</h3>
   <form (ngSubmit)="onSubmit()">
+  @if (errorMessage) {
+    <div class="error-alert">
+      {{ errorMessage }}
+    </div>
+  }
+
     <div>
       <label for="category">Category</label>
       @if (isNewCategory) {

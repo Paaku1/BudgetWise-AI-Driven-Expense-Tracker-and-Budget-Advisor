@@ -26,6 +26,7 @@ export class SavingGoalFormComponent implements OnInit {
 
   categories: string[] = [];
   isNewCategory: boolean = false;
+  errorMessage: string = '';
 
   constructor(
     private savingGoalService: SavingGoalService,
@@ -55,19 +56,50 @@ export class SavingGoalFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (!this.validateGoalData()) {
+      return; // Stop submission if validation fails
+    }
+
     const userId = this.authService.getUserId();
     if (userId) {
       this.savingGoalService.createGoal(userId, this.goal as SavingGoal).subscribe({
         next: (newGoal) => {
+          this.errorMessage = '';
           alert('Saving goal added successfully!');
           this.goalAdded.emit(newGoal);
           this.closeForm.emit();
         },
         error: (err) => {
           console.error('Error adding saving goal:', err);
-          alert('Failed to add saving goal. Please try again.');
+          this.errorMessage = 'Failed to add saving goal. Please try again.';
         }
       });
     }
+  }
+
+  private validateGoalData(): boolean {
+    this.errorMessage = '';
+
+    if (!this.goal.category?.trim()) {
+      this.errorMessage = 'Category is required';
+      return false;
+    }
+    if (!this.goal.targetAmount || this.goal.targetAmount <= 0) {
+      this.errorMessage = 'Target amount must be greater than 0';
+      return false;
+    }
+    if (this.goal.savedAmount === null || this.goal.savedAmount === undefined || this.goal.savedAmount < 0) {
+      this.errorMessage = 'Saved amount must be 0 or greater';
+      return false;
+    }
+    if (!this.goal.deadline) {
+      this.errorMessage = 'Deadline is required';
+      return false;
+    }
+    if (new Date(this.goal.deadline) < new Date()) {
+      this.errorMessage = 'Deadline must be in the future';
+      return false;
+    }
+    return true;
   }
 }

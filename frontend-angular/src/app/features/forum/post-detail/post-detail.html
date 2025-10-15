@@ -1,3 +1,10 @@
+<app-alert
+  *ngIf="showAlert"
+  [message]="alertMessage"
+  [type]="alertType"
+  (close)="showAlert = false"
+></app-alert>
+
 <div class="post-detail-container">
   <div class="page-header">
     <a routerLink="/forum" class="back-link">&larr; Back to Forum</a>

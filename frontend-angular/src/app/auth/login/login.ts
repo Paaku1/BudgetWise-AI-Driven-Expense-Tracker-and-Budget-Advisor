@@ -22,6 +22,11 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit(): void {
+    if (!this.username.trim() || !this.password.trim()) {
+      this.error = 'Username and password are required.';
+      return;
+    }
+
     this.authService.login({ username: this.username, password: this.password })
       .subscribe({
         next: (res) => {

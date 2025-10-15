@@ -23,6 +23,7 @@ export class BudgetTrackerComponent implements OnInit {
   isBudgetFormVisible = false;
   editingBudget: Budget | null = null;
   editData: Partial<Budget> = {};
+  errorMessage: string = '';
 
   constructor(
     private budgetService: BudgetService,
@@ -64,6 +65,10 @@ export class BudgetTrackerComponent implements OnInit {
 
   handleSave(): void {
     if (this.editingBudget && this.editData.id) {
+      if (!this.validateBudgetData(this.editData as Budget)) {
+        alert(this.errorMessage);
+        return;
+      }
       this.budgetService.updateBudget(this.editData.id, this.editData as Budget).subscribe({
         next: (updatedBudget) => {
           const index = this.budgets.findIndex(b => b.id === updatedBudget.id);
@@ -85,6 +90,19 @@ export class BudgetTrackerComponent implements OnInit {
   handleCancel(): void {
     this.editingBudget = null;
     this.editData = {};
+  }
+
+  private validateBudgetData(budget: Budget): boolean {
+    this.errorMessage = '';
+    if (!budget.category?.trim()) {
+      this.errorMessage = 'Category is required';
+      return false;
+    }
+    if (!budget.limitAmount || budget.limitAmount <= 0) {
+      this.errorMessage = 'Limit amount must be greater than 0';
+      return false;
+    }
+    return true;
   }
 
   handleDelete(id: number): void {

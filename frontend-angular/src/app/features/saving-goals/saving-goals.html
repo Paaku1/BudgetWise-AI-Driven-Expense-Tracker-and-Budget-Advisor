@@ -17,15 +17,22 @@
     @for (goal of savingGoals; track goal.id) {
       <div class="goal-card">
         @if (editingGoal?.id === goal.id) {
-          <div class="edit-form-container">
-            <input type="text" [(ngModel)]="editData.category" name="category" placeholder="Category" required />
-            <input type="number" [(ngModel)]="editData.targetAmount" name="targetAmount" placeholder="Target Amount" required />
-            <div class="edit-actions">
-              <button class="save-btn btn-sm" (click)="handleSave()">Save</button>
-              <button class="cancel-btn btn-sm" (click)="handleCancel()">Cancel</button>
+        <div class="edit-form-container">
+          @if (errorMessage) {
+            <div class="error-alert">
+              {{ errorMessage }}
             </div>
+          }
+          <input type="text" [(ngModel)]="editData.category" name="category" placeholder="Category" required />
+          <input type="number" [(ngModel)]="editData.targetAmount" name="targetAmount" placeholder="Target Amount" required />
+          <input type="number" [(ngModel)]="editData.savedAmount" name="savedAmount" placeholder="Saved Amount" required />
+          <input type="date" [(ngModel)]="editData.deadline" name="deadline" required />
+          <div class="edit-actions">
+            <button class="save-btn btn-sm" (click)="handleSave()">Save</button>
+            <button class="cancel-btn btn-sm" (click)="handleCancel()">Cancel</button>
           </div>
-        } @else {
+        </div>
+      } @else {
           <div class="goal-header">
             <div class="category-header">
               <h4>{{ goal.category }}</h4>
